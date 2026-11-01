@@ -1,4 +1,5 @@
 <title>दुर्गा शक्ति फाउंडेशन</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="robots" content="noindex,nofollow">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi&family=Mukta:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
@@ -56,7 +57,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .pinwrap input{letter-spacing:.5em;font-family:var(--f-num);padding-right:52px}
 .eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:0;color:rgba(255,246,230,.7);padding:8px;cursor:pointer;border-radius:8px}
 .eye:focus-visible{outline:2px solid var(--gold)}
-.lbtn{background:var(--gold);color:#3a0c08;border:0;border-radius:10px;padding:13px;font:700 1rem var(--f-body);cursor:pointer;margin-top:4px}
+.lbtn{background:var(--gold);color:#3a0c08;border:0;border-radius:10px;padding:16px;font:700 1.1rem var(--f-body);cursor:pointer;margin-top:4px;min-height:52px}
+@media (max-width:600px){.lcard{max-width:100%;padding:24px 18px}.lcard h1{font-size:1.6rem}.lform input{font-size:16px;padding:14px}.login{padding-block:16px}}
 .lbtn:disabled{opacity:.6;cursor:wait}
 .lerr{min-height:1.3em;font-size:.85rem;color:#ffb4a8;text-align:center}
 .lfoot{display:flex;align-items:center;justify-content:center;gap:6px;font-size:.75rem;color:rgba(255,246,230,.6)}
@@ -169,20 +171,19 @@ tr.total td{font-weight:700;background:var(--bg)}
 <div id="loginView" class="login" hidden>
   <div class="credit">Made by <b>Manohar Singh</b> (imanohar7773)</div>
   <div class="lcard">
-    <div class="emblem"><svg viewBox="0 0 24 24" fill="none" stroke="#5a0f0b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V6"/><path d="M12 2l-2 4h4z" fill="#5a0f0b"/><path d="M6 4c0 4 2 6 6 6s6-2 6-6"/><path d="M6 4l-1.2 2.2M18 4l1.2 2.2"/><path d="M9 18h6"/></svg></div>
     <h1>दुर्गा शक्ति फाउंडेशन</h1>
     <div class="tag">सहयोग राशि प्रबंधन</div>
     <form class="lform" id="loginForm" autocomplete="on">
-      <label>उपयोगकर्ता नाम<input id="lUser" autocomplete="username" required placeholder="Mr. ..."></label>
+      <label>उपयोगकर्ता नाम (fixed — sirf PIN dalo)<input id="lUser" autocomplete="username" required value="Mr. Manvendra Singh" readonly></label>
       <label>पिन
         <div class="pinwrap"><input id="lPin" type="password" inputmode="numeric" autocomplete="current-password" required maxlength="12">
         <button type="button" class="eye" id="eye" aria-label="पिन दिखाएँ"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
       </label>
       <div class="lerr" id="lErr" role="alert"></div>
       <button class="lbtn" id="lBtn" type="submit">लॉगिन करें</button>
+      <button type="button" style="background:none;border:0;color:var(--gold);cursor:pointer;font-size:.85rem;margin:0 auto;text-decoration:underline" onclick="try{localStorage.removeItem('dsf_lock')}catch(e){}location.reload()">Lock atak gaya ho to yahan dabao — lock saaf hoga</button>
     </form>
     <div class="lfoot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>सुरक्षित लॉगिन · 30 मिनट निष्क्रिय रहने पर अपने आप लॉगआउट</div>
-    <span class="mode" id="modeTag"></span>
   </div>
   <a class="publink" href="#report">सार्वजनिक मासिक हिसाब देखें</a>
 </div>
@@ -212,7 +213,6 @@ tr.total td{font-weight:700;background:var(--bg)}
   <div class="credit">Made by <b>Manohar Singh</b> (imanohar7773)</div>
   <div class="wrap h">
     <div class="brand">
-      <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="#5a0f0b" stroke-width="2" stroke-linecap="round"><path d="M12 22V6"/><path d="M12 2l-2 4h4z" fill="#5a0f0b"/><path d="M6 4c0 4 2 6 6 6s6-2 6-6"/></svg></div>
       <div><h1>दुर्गा शक्ति फाउंडेशन</h1><div class="sub">सदस्य सहयोग राशि रजिस्टर</div></div>
       <div class="who"><span class="sync" id="syncDot" title="लाइव सिंक"></span><button id="logout">लॉगआउट</button></div>
     </div>
@@ -386,7 +386,7 @@ const FIREBASE_CONFIG = {
   appId: "1:519728871190:web:edc388a5599cc4c85b8237"
 };
 const ADMIN_EMAIL = "admin@durgashaktifoundation.in";   // Firebase Auth me yahi user banana hai
-const ALLOWED_USERS = ["mrmanvandrasingh","manvandrasingh","mrmanvendrasingh","manvendrasingh"];
+const ALLOWED_USERS = ["mrmanvandrasingh","manvandrasingh","mrmanvendrasingh","manvendrasingh","manvendra","mrmanvendra"];
 const START='2026-08', IDLE_MIN=30, MAX_TRY=5, LOCK_MIN=5;
 
 
@@ -465,7 +465,6 @@ const LK='dsf_lock';
 function lockLeft(){const l=ls.get(LK)||{n:0,until:0};return Math.max(0,l.until-Date.now())}
 function failTry(){const l=ls.get(LK)||{n:0,until:0};l.n++;if(l.n>=MAX_TRY){l.until=Date.now()+LOCK_MIN*60000;l.n=0}ls.set(LK,l);return l}
 $('#eye').onclick=()=>{const i=$('#lPin');i.type=i.type==='password'?'text':'password'};
-$('#modeTag').textContent=FIRE?'Firebase लाइव मोड · Purchase MIS se alag data':'प्रीव्यू मोड · डेटा सिर्फ़ इस ब्राउज़र में';
 $('#loginForm').onsubmit=async e=>{
   e.preventDefault();const E=$('#lErr');E.textContent='';
   const left=lockLeft();if(left){E.textContent=`बहुत ज़्यादा गलत कोशिश। ${Math.ceil(left/60000)} मिनट बाद फिर कोशिश करें।`;return}
@@ -473,23 +472,23 @@ $('#loginForm').onsubmit=async e=>{
   const btn=$('#lBtn');btn.disabled=true;btn.textContent='जाँच हो रही है…';
   let ok=false;
   try{
+    if(!FIRE)throw {code:'no-fire'};
     if(!ALLOWED_USERS.includes(u))throw {code:'bad'};
-    // User ka diya hua login: sirf yahi PIN chalega (galat PIN Firebase tak jayega hi nahi)
     if(pin!=='6630')throw {code:'bad'};
-    if(FIRE){
-      try{await Store.login(pin);ok=true}
-      catch(ae){
-        // Auth user abhi project me bana nahi hai ya Auth enable nahi hai:
-        // login block mat karo — Firestore data store (Purchase MIS jaisa, open rules)
-        // se app chalega, aur Auth banne ke baad wahi PIN se Auth login bhi chalega.
-        if(ae&&ae.code&&(ae.code.indexOf('auth/')===0)){
-          sessionStorage.setItem('dsf_sess','1');sessionStorage.setItem('dsf_fb_fallback','1');ok=true;
-        } else throw ae;
-      }
+    try{await Store.login(pin);ok=true}
+    catch(ae){
+      if(ae&&ae.code&&(ae.code==='auth/network-request-failed'||ae.code==='auth/too-many-requests'))throw ae;
+      if(ae&&ae.code&&(ae.code.indexOf('auth/')===0)){
+        sessionStorage.setItem('dsf_sess','1');sessionStorage.setItem('dsf_fb_fallback','1');ok=true;
+      } else throw ae;
     }
   }catch(x){
-    const l=failTry();
-    E.textContent=x.code==='auth/too-many-requests'?'बहुत ज़्यादा कोशिश, थोड़ी देर बाद करें।':x.code==='auth/network-request-failed'?'इंटरनेट नहीं है।':`नाम या पिन गलत है।${l.until?'':' बची कोशिश: '+(MAX_TRY-l.n)}`;
+    const l=(x.code==='no-fire'||x.code==='auth/network-request-failed')?{n:0,until:0}:failTry();
+    if(x.code==='no-fire')E.textContent='Firebase load nahi hua — internet check karo aur page refresh karo (purani file cache me ho to hard refresh karo).';
+    else if(x.code==='auth/too-many-requests')E.textContent='बहुत ज़्यादा कोशिश, थोड़ी देर बाद करें।';
+    else if(x.code==='auth/network-request-failed')E.textContent='इंटरनेट नहीं है — net on karke dobara try karo।';
+    else if(x.code&&x.code.indexOf('auth/')===0)E.textContent='Firebase error: '+x.code+' — PIN sahi hai, phir bhi na khule to is text ka screenshot bhejo।';
+    else E.textContent=`नाम या पिन गलत है।${l.until?'':' बची कोशिश: '+(MAX_TRY-l.n)}`;
   }
   btn.disabled=false;btn.textContent='लॉगिन करें';$('#lPin').value='';
   if(ok){ls.set(LK,{n:0,until:0});if(!FIRE)sessionStorage.setItem('dsf_sess','1');enterApp()}
@@ -630,7 +629,7 @@ function buildReport(M,withDue){
 }
 function reportHTML(r){
   return `<div class="rep">
-    <div class="rep-h"><div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="#5a0f0b" stroke-width="2" stroke-linecap="round"><path d="M12 22V6"/><path d="M12 2l-2 4h4z" fill="#5a0f0b"/><path d="M6 4c0 4 2 6 6 6s6-2 6-6"/></svg></div>
+    <div class="rep-h">
       <div><h3>दुर्गा शक्ति फाउंडेशन</h3><p>${mL(r.month)} · मासिक हिसाब</p></div></div>
     <div class="rep-sum">
       <span>पिछला शेष</span><span class="n">${rs(r.open)}</span>
