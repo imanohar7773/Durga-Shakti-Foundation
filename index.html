@@ -10,6 +10,7 @@
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.14.1/firebase-app-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.14.1/firebase-auth-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
 /* Layout: kumkum login gate -> sticky header + tabs; public report is its own read-only view */
 :root{
@@ -209,8 +210,28 @@ tr.total td{font-weight:700;background:var(--bg)}
 <div id="pubView" hidden>
   <div class="wrap pub">
     <div class="credit">Made by <b>Manohar Singh</b> (imanohar7773)</div>
-    <div class="tools" style="justify-content:center"><select id="pubMonth" style="width:auto"></select></div>
-    <div id="pubBody"></div>
+    <div class="tools" style="justify-content:center;gap:8px">
+      <button class="btn" id="pubTabReport">मासिक रिपोर्ट</button>
+      <button class="btn ghost" id="pubTabColl">कलेक्शन सूची</button>
+    </div>
+    <div id="pubReportWrap">
+      <div class="tools" style="justify-content:center"><select id="pubMonth" style="width:auto"></select></div>
+      <div id="pubBody"></div>
+    </div>
+    <div id="pubCollWrap" hidden>
+      <div class="panel">
+        <div class="ph"><h2>सभी सदस्य व कलेक्शन सूची</h2>
+          <div class="tools"><select id="pubCMonth" style="width:auto"></select></div>
+        </div>
+        <div class="stats" id="pubCStats" style="padding:16px"></div>
+        <div class="tbl"><table>
+          <thead><tr><th>क्र.</th><th>सदस्य</th><th class="n">जमा</th><th>कवर तक</th><th>स्थिति</th></tr></thead>
+          <tbody id="pubCRows"></tbody>
+        </table></div>
+        <div class="ph" style="border-top:1px solid var(--line)"><div id="pubCTotals" style="font-weight:700"></div></div>
+        <p class="note" style="padding-top:0">महीना चुनें तो सिर्फ उस महीने का जमा दिखेगा, “सभी महीने” चुनें तो अब तक का कुल जमा दिखेगा।</p>
+      </div>
+    </div>
     <div style="text-align:center"><a class="publink" style="color:var(--kumkum)" href="#">एडमिन लॉगिन</a></div>
     <div class="credit" style="margin-top:12px">All rights reserved - Nexora - Digital &amp; IT Agency</div>
   </div>
@@ -710,6 +731,52 @@ async function loadPublic(){
   }catch(e){$('#pubBody').innerHTML='<div class="empty">रिपोर्ट नहीं खुली। इंटरनेट जाँचें।</div>'}
 }
 
+/* ============ PUBLIC COLLECTION (v9, Hindi only, read-only) ============ */
+let pubMembers=[],pubPayments=[],pubCollLoaded=false;
+function pubMonthStatus(mid,M){
+  const ps=pubPayments.filter(p=>p.mid===mid);
+  const recv=ps.filter(p=>p.month===M).reduce((s,p)=>s+Number(p.amt),0);
+  const cov=ps.filter(p=>p.from<=M&&M<=p.to);
+  if(recv>0)return{l:'जमा',recv};
+  if(cov.length)return{l:'√ कवर',recv:0};
+  return{l:'बाकी',recv:0};
+}
+function renderPubColl(){
+  if(!$('#pubCMonth'))return;
+  const months=new Set([CUR]);range(START,CUR).forEach(k=>months.add(k));pubPayments.forEach(p=>months.add(p.month));
+  const opts=['',...[...months].sort().reverse()];
+  const cur=$('#pubCMonth').value;
+  $('#pubCMonth').innerHTML=opts.map(k=>`<option value="${k}">${k?mL(k):'सभी महीने'}</option>`).join('');
+  if(opts.includes(cur))$('#pubCMonth').value=cur;else $('#pubCMonth').value='';
+  const M=$('#pubCMonth').value||'';
+  const rows=pubMembers.slice().sort((a,b)=>a.sr-b.sr).map(m=>{
+    const ps=pubPayments.filter(p=>p.mid===m.id);
+    let amt,upto,status;
+    if(M){const s=pubMonthStatus(m.id,M);amt=s.recv;status=s.l;upto=ps.map(p=>p.to).sort().pop();}
+    else{amt=ps.reduce((s,p)=>s+Number(p.amt),0);upto=ps.map(p=>p.to).sort().pop();status=amt>0?'जमा':'बाकी';}
+    return {m,amt,upto,status};
+  });
+  const total=rows.reduce((s,r)=>s+r.amt,0);
+  const paid=rows.filter(r=>r.amt>0).length;
+  $('#pubCStats').innerHTML=`<div class="stat hl"><div class="k">कुल कलेक्शन</div><div class="v">${rs(total)}</div></div><div class="stat"><div class="k">सदस्य</div><div class="v">${rows.length}</div></div><div class="stat"><div class="k">जमा करने वाले</div><div class="v">${paid}</div></div><div class="stat"><div class="k">बाकी</div><div class="v">${rows.length-paid}</div></div>`;
+  $('#pubCRows').innerHTML=rows.map(r=>`<tr><td class="sr">${r.m.sr}</td><td class="name">${esc(r.m.name)}</td><td class="n">${r.amt?rs(r.amt):'—'}</td><td>${r.upto?mS(r.upto):'—'}</td><td><span class="pill ${r.amt>0?'paid':'due'}">${r.status}</span></td></tr>`).join('')||`<tr><td colspan="5" class="empty">कोई सदस्य नहीं मिला।</td></tr>`;
+  $('#pubCTotals').textContent=`कुल कलेक्शन: ${rs(total)}  ·  सदस्य: ${rows.length}  ·  जमा करने वाले: ${paid}  ·  बाकी: ${rows.length-paid}  ·  महीना: ${M?mL(M):'सभी महीने'}`;
+}
+async function loadPubColl(){
+  if(pubCollLoaded){renderPubColl();return;}
+  $('#pubCRows').innerHTML='<tr><td colspan="5" class="empty">कलेक्शन लोड हो रहा है…</td></tr>';
+  try{
+    if(!FIRE||!Store.fs)throw new Error('no-fire');
+    const ms=await Store.fs.collection('members').get();
+    const ps=await Store.fs.collection('payments').get();
+    pubMembers=ms.docs.map(d=>d.data());pubPayments=ps.docs.map(d=>d.data());pubCollLoaded=true;
+    renderPubColl();
+  }catch(e){$('#pubCRows').innerHTML='<tr><td colspan="5" class="empty">कलेक्शन नहीं खुला। इंटरनेट जाँचें।</td></tr>';}
+}
+$('#pubTabReport').onclick=()=>{$('#pubReportWrap').hidden=false;$('#pubCollWrap').hidden=true;$('#pubTabReport').className='btn';$('#pubTabColl').className='btn ghost';};
+$('#pubTabColl').onclick=()=>{$('#pubReportWrap').hidden=true;$('#pubCollWrap').hidden=false;$('#pubTabReport').className='btn ghost';$('#pubTabColl').className='btn';loadPubColl();};
+$('#pubCMonth').onchange=renderPubColl;
+
 /* ============ FORMS ============ */
 $('#pFrom').onchange=()=>{if($('#pTo').value<$('#pFrom').value)$('#pTo').value=$('#pFrom').value};
 $('#payForm').onsubmit=e=>{e.preventDefault();const m=findMem($('#pMember').value);
@@ -759,55 +826,63 @@ function downloadCanvas(cv,filename){cv.toBlob(b=>{const a=document.createElemen
 function fitText(ctx,t,maxW){let s=t;while(s&&ctx.measureText(s).width>maxW){s=s.slice(0,-1)}if(s!==t)s=s.slice(0,-1)+'…';return s}
 function drawCollectionPNG(){
   const d=collectionData();
-  const W=1200,rowH=54,headH=160;
-  const hasPhone=d.rows.some(r=>r.m.phone);
-  const cols=hasPhone?[[40,'क्र.',70],[110,'सदस्य',460],[570,'मोबाइल',150],[720,'जमा',170],[890,'कवर तक',150],[1040,'स्थिति',120]]:[[40,'क्र.',70],[110,'सदस्य',560],[670,'जमा',200],[870,'कवर तक',170],[1040,'स्थिति',120]];
-  const PER_PAGE=40;
-  const chunks=[];
-  for(let i=0;i<d.rows.length;i+=PER_PAGE)chunks.push(d.rows.slice(i,i+PER_PAGE));
-  if(!chunks.length)chunks.push([]);
-  const totalPages=chunks.length;
-  const dateStr=TODAY.split('-').reverse().join('-');
-  chunks.forEach((rows,pi)=>{
-    const isLast=pi===totalPages-1;
-    const H=headH+54+rows.length*rowH+(isLast?110:0)+60;
-    const cv=document.createElement('canvas');cv.width=W;cv.height=H;const ctx=cv.getContext('2d');
-    ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
-    ctx.fillStyle='#9e2019';ctx.fillRect(0,0,W,120);
-    ctx.fillStyle='#fff';ctx.font='700 36px Mukta, sans-serif';ctx.fillText('दुर्गा शक्ति फाउंडेशन',40,52);
-    ctx.font='24px Mukta, sans-serif';ctx.fillText(`सदस्य कलेक्शन सूची — ${d.M?mL(d.M):'सभी महीने'}`,40,88);
-    ctx.font='18px Mukta, sans-serif';ctx.fillText(`तारीख: ${dateStr}  ·  सदस्य: ${d.totalMembers}  ·  पेज ${pi+1}/${totalPages}`,40,138);
-    ctx.fillStyle='#2a1712';ctx.fillRect(30,headH,W-60,54);
-    ctx.fillStyle='#fff';ctx.font='700 22px Mukta, sans-serif';
-    cols.forEach(([x,t])=>ctx.fillText(t,x,headH+35));
-    ctx.font='22px Mukta, sans-serif';
+  const W=1240,H=1754;
+  const cv=document.createElement('canvas');cv.width=W;cv.height=H;const ctx=cv.getContext('2d');
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#9e2019';ctx.fillRect(0,0,W,150);
+  ctx.fillStyle='#fff';ctx.font='700 42px Mukta, sans-serif';ctx.fillText('दुर्गा शक्ति फाउंडेशन',48,62);
+  ctx.font='26px Mukta, sans-serif';ctx.fillText(`सदस्य कलेक्शन सूची — ${d.M?mL(d.M):'सभी महीने'}`,48,102);
+  ctx.font='20px Mukta, sans-serif';ctx.fillText(`तारीख: ${TODAY.split('-').reverse().join('-')}  ·  सदस्य: ${d.totalMembers}  ·  जमा करने वाले: ${d.paid}  ·  बाकी: ${d.totalMembers-d.paid}`,48,134);
+  const topY=180;
+  const leftCount=Math.ceil(d.rows.length/2);
+  const leftRows=d.rows.slice(0,leftCount);
+  const rightRows=d.rows.slice(leftCount);
+  const maxRows=Math.max(leftRows.length,rightRows.length,1);
+  const availH=H-topY-170;
+  const rowH=Math.max(19,Math.min(32,Math.floor(availH/maxRows)));
+  const fontSize=Math.max(13,Math.min(20,rowH-7));
+  const tableW=(W-96)/2;
+  const leftX=48,rightX=48+tableW+24;
+  function drawTable(x,rows){
+    ctx.fillStyle='#2a1712';ctx.fillRect(x,topY,tableW,40);
+    ctx.fillStyle='#fff';ctx.font=`700 ${fontSize}px Mukta, sans-serif`;
+    const c1=x+8,c2=x+62,c3=x+tableW-240,c4=x+tableW-130,c5=x+tableW-70;
+    ctx.fillText('क्र.',c1,topY+27);
+    ctx.fillText('सदस्य',c2,topY+27);
+    ctx.fillText('जमा',c3,topY+27);
+    ctx.fillText('कवर तक',c4,topY+27);
+    ctx.fillText('स्थिति',c5,topY+27);
+    ctx.font=`${fontSize}px Mukta, sans-serif`;
     rows.forEach((r,i)=>{
-      const y=headH+54+i*rowH;
-      if(i%2===0){ctx.fillStyle='#faf6f1';ctx.fillRect(30,y,W-60,rowH);}
+      const y=topY+40+i*rowH;
+      if(i%2===0){ctx.fillStyle='#faf6f1';ctx.fillRect(x,y,tableW,rowH);}
       ctx.fillStyle='#2a1712';
-      const nameW=hasPhone?440:540;
-      ctx.fillText(String(r.m.sr),40,y+36);
-      ctx.fillText(fitText(ctx,r.m.name,nameW),110,y+36);
-      let colIdx=2;
-      if(hasPhone){ctx.fillText(r.m.phone||'—',570,y+36);colIdx=3;}
-      const amtX=hasPhone?720:670, covX=hasPhone?890:870, stX=1040;
-      ctx.fillText(r.amt?rs(r.amt):'—',amtX,y+36);
-      ctx.fillText(r.upto?mS(r.upto):'—',covX,y+36);
-      ctx.fillText(r.status,stX,y+36);
-      ctx.strokeStyle='#eadfd3';ctx.beginPath();ctx.moveTo(30,y+rowH);ctx.lineTo(W-30,y+rowH);ctx.stroke();
+      ctx.fillText(String(r.m.sr),c1,y+rowH-7);
+      ctx.fillText(fitText(ctx,r.m.name,tableW-330),c2,y+rowH-7);
+      ctx.fillText(r.amt?rs(r.amt):'—',c3,y+rowH-7);
+      ctx.fillText(r.upto?mS(r.upto):'—',c4,y+rowH-7);
+      ctx.fillText(r.status,c5,y+rowH-7);
     });
-    let fy=headH+54+rows.length*rowH+16;
-    if(isLast){
-      ctx.fillStyle='#fdf1dc';ctx.fillRect(30,fy,W-60,90);
-      ctx.fillStyle='#9e2019';ctx.font='700 26px Mukta, sans-serif';ctx.fillText(`कुल कलेक्शन: ${rs(d.total)}`,40,fy+36);
-      ctx.font='21px Mukta, sans-serif';ctx.fillStyle='#2a1712';ctx.fillText(`सदस्य: ${d.totalMembers}  ·  जमा करने वाले: ${d.paid}  ·  बाकी: ${d.totalMembers-d.paid}`,40,fy+70);
-      fy+=90;
-    }
-    ctx.font='16px Mukta, sans-serif';ctx.fillStyle='#7a645a';ctx.textAlign='center';ctx.fillText('All rights reserved - Nexora - Digital & IT Agency',W/2,H-18);ctx.textAlign='left';
-    const suffix=totalPages>1?`-page${pi+1}`:'';
-    setTimeout(()=>downloadCanvas(cv,`Durga-Shakti-Collection-${d.M||'all'}${suffix}.png`),pi*600);
-  });
-  if(totalPages>1)toast(`${totalPages} PNG पेज डाउनलोड हो रहे हैं`);
+  }
+  drawTable(leftX,leftRows);
+  drawTable(rightX,rightRows);
+  const footY=topY+40+maxRows*rowH+20;
+  ctx.fillStyle='#fdf1dc';ctx.fillRect(48,footY,W-96,84);
+  ctx.fillStyle='#9e2019';ctx.font='700 26px Mukta, sans-serif';ctx.fillText(`कुल कलेक्शन: ${rs(d.total)}`,64,footY+36);
+  ctx.font='21px Mukta, sans-serif';ctx.fillStyle='#2a1712';ctx.fillText(`सदस्य: ${d.totalMembers}  ·  जमा करने वाले: ${d.paid}  ·  बाकी: ${d.totalMembers-d.paid}`,64,footY+66);
+  ctx.font='16px Mukta, sans-serif';ctx.fillStyle='#7a645a';ctx.textAlign='center';ctx.fillText('All rights reserved - Nexora - Digital & IT Agency',W/2,H-20);ctx.textAlign='left';
+  downloadCanvas(cv,`Durga-Shakti-Collection-A4-${d.M||'all'}.png`);
+}
+function downloadReportAsSticker(){
+  const el=document.querySelector('#repPreview .rep')||document.getElementById('repPreview');
+  if(window.html2canvas&&el){
+    return window.html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true}).then(cv=>{
+      downloadCanvas(cv,`Durga-Shakti-Monthly-Report-${(curRep||{}).month||($('#rMonth').value||CUR)}.png`);
+      toast('PNG डाउनलोड हो गया');
+    }).catch(()=>{drawReportPNG();toast('PNG डाउनलोड हो गया');});
+  } else {
+    drawReportPNG();toast('PNG डाउनलोड हो गया');
+  }
 }
 function drawReportPNG(){
   const r=curRep||buildReport($('#rMonth').value||CUR,$('#rDue').checked);
@@ -879,7 +954,7 @@ function downloadReportExcel(){
 }
 $('#cPng').onclick=async()=>{await document.fonts.ready;drawCollectionPNG();toast('PNG डाउनलोड हो गया')};
 $('#cCsv').onclick=()=>{downloadCollectionExcel();toast('Excel डाउनलोड हो गया')};
-$('#rPng').onclick=async()=>{await document.fonts.ready;drawReportPNG();toast('PNG डाउनलोड हो गया')};
+$('#rPng').onclick=async()=>{await document.fonts.ready;await downloadReportAsSticker();};
 $('#rXls').onclick=()=>{downloadReportExcel();toast('Excel डाउनलोड हो गया')};
 
 /* ============ BACKUP ============ */
