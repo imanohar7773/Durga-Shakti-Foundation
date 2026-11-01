@@ -758,54 +758,108 @@ $('#cMonth').onchange=renderCollection;$('#cSearch').addEventListener('input',re
 function downloadCanvas(cv,filename){cv.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),3000)},'image/png')}
 function fitText(ctx,t,maxW){let s=t;while(s&&ctx.measureText(s).width>maxW){s=s.slice(0,-1)}if(s!==t)s=s.slice(0,-1)+'…';return s}
 function drawCollectionPNG(){
-  const d=collectionData();const W=1100,rowH=44,headH=150,footH=110;
-  const H=headH+44+d.rows.length*rowH+footH;
-  const cv=document.createElement('canvas');cv.width=W;cv.height=H;const ctx=cv.getContext('2d');
-  ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
-  ctx.fillStyle='#9e2019';ctx.fillRect(0,0,W,110);
-  ctx.fillStyle='#fff';ctx.font='700 30px Mukta, sans-serif';ctx.fillText('दुर्गा शक्ति फाउंडेशन',40,48);
-  ctx.font='20px Mukta, sans-serif';ctx.fillText(`सदस्य कलेक्शन सूची — ${d.M?mL(d.M):'सभी महीने'}`,40,82);
-  ctx.font='16px Mukta, sans-serif';ctx.fillText(`तारीख: ${TODAY.split('-').reverse().join('-')}  ·  सदस्य: ${d.totalMembers}`,40,132);
-  ctx.fillStyle='#2a1712';ctx.fillRect(30,headH,W-60,44);
-  ctx.fillStyle='#fff';ctx.font='700 19px Mukta, sans-serif';
-  [['क्र.',40],['सदस्य',110],['मोबाइल',530],['जमा',680],['कवर तक',830],['स्थिति',950]].forEach(([t,x])=>ctx.fillText(t,x,headH+29));
-  ctx.font='19px Mukta, sans-serif';
-  d.rows.forEach((r,i)=>{const y=headH+44+i*rowH;
-    if(i%2===0){ctx.fillStyle='#faf6f1';ctx.fillRect(30,y,W-60,rowH);}
-    ctx.fillStyle='#2a1712';
-    ctx.fillText(String(r.m.sr),40,y+28);
-    ctx.fillText(fitText(ctx,r.m.name,400),110,y+28);
-    ctx.fillText(r.m.phone||'—',530,y+28);
-    ctx.fillText(r.amt?rs(r.amt):'—',680,y+28);
-    ctx.fillText(r.upto?mS(r.upto):'—',830,y+28);
-    ctx.fillText(r.status,950,y+28);
-    ctx.strokeStyle='#eadfd3';ctx.beginPath();ctx.moveTo(30,y+rowH);ctx.lineTo(W-30,y+rowH);ctx.stroke();});
-  const fy=headH+44+d.rows.length*rowH+20;
-  ctx.fillStyle='#9e2019';ctx.font='700 22px Mukta, sans-serif';ctx.fillText(`कुल कलेक्शन: ${rs(d.total)}`,40,fy+28);
-  ctx.font='19px Mukta, sans-serif';ctx.fillStyle='#2a1712';ctx.fillText(`सदस्य: ${d.totalMembers}  ·  जमा करने वाले: ${d.paid}  ·  बाकी: ${d.totalMembers-d.paid}`,40,fy+58);
-  ctx.font='15px Mukta, sans-serif';ctx.fillStyle='#7a645a';ctx.textAlign='center';ctx.fillText('All rights reserved - Nexora - Digital & IT Agency',W/2,H-18);ctx.textAlign='left';
-  downloadCanvas(cv,`Durga-Shakti-Collection-${d.M||'all'}.png`);
+  const d=collectionData();
+  const W=1200,rowH=54,headH=160;
+  const hasPhone=d.rows.some(r=>r.m.phone);
+  const cols=hasPhone?[[40,'क्र.',70],[110,'सदस्य',460],[570,'मोबाइल',150],[720,'जमा',170],[890,'कवर तक',150],[1040,'स्थिति',120]]:[[40,'क्र.',70],[110,'सदस्य',560],[670,'जमा',200],[870,'कवर तक',170],[1040,'स्थिति',120]];
+  const PER_PAGE=40;
+  const chunks=[];
+  for(let i=0;i<d.rows.length;i+=PER_PAGE)chunks.push(d.rows.slice(i,i+PER_PAGE));
+  if(!chunks.length)chunks.push([]);
+  const totalPages=chunks.length;
+  const dateStr=TODAY.split('-').reverse().join('-');
+  chunks.forEach((rows,pi)=>{
+    const isLast=pi===totalPages-1;
+    const H=headH+54+rows.length*rowH+(isLast?110:0)+60;
+    const cv=document.createElement('canvas');cv.width=W;cv.height=H;const ctx=cv.getContext('2d');
+    ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#9e2019';ctx.fillRect(0,0,W,120);
+    ctx.fillStyle='#fff';ctx.font='700 36px Mukta, sans-serif';ctx.fillText('दुर्गा शक्ति फाउंडेशन',40,52);
+    ctx.font='24px Mukta, sans-serif';ctx.fillText(`सदस्य कलेक्शन सूची — ${d.M?mL(d.M):'सभी महीने'}`,40,88);
+    ctx.font='18px Mukta, sans-serif';ctx.fillText(`तारीख: ${dateStr}  ·  सदस्य: ${d.totalMembers}  ·  पेज ${pi+1}/${totalPages}`,40,138);
+    ctx.fillStyle='#2a1712';ctx.fillRect(30,headH,W-60,54);
+    ctx.fillStyle='#fff';ctx.font='700 22px Mukta, sans-serif';
+    cols.forEach(([x,t])=>ctx.fillText(t,x,headH+35));
+    ctx.font='22px Mukta, sans-serif';
+    rows.forEach((r,i)=>{
+      const y=headH+54+i*rowH;
+      if(i%2===0){ctx.fillStyle='#faf6f1';ctx.fillRect(30,y,W-60,rowH);}
+      ctx.fillStyle='#2a1712';
+      const nameW=hasPhone?440:540;
+      ctx.fillText(String(r.m.sr),40,y+36);
+      ctx.fillText(fitText(ctx,r.m.name,nameW),110,y+36);
+      let colIdx=2;
+      if(hasPhone){ctx.fillText(r.m.phone||'—',570,y+36);colIdx=3;}
+      const amtX=hasPhone?720:670, covX=hasPhone?890:870, stX=1040;
+      ctx.fillText(r.amt?rs(r.amt):'—',amtX,y+36);
+      ctx.fillText(r.upto?mS(r.upto):'—',covX,y+36);
+      ctx.fillText(r.status,stX,y+36);
+      ctx.strokeStyle='#eadfd3';ctx.beginPath();ctx.moveTo(30,y+rowH);ctx.lineTo(W-30,y+rowH);ctx.stroke();
+    });
+    let fy=headH+54+rows.length*rowH+16;
+    if(isLast){
+      ctx.fillStyle='#fdf1dc';ctx.fillRect(30,fy,W-60,90);
+      ctx.fillStyle='#9e2019';ctx.font='700 26px Mukta, sans-serif';ctx.fillText(`कुल कलेक्शन: ${rs(d.total)}`,40,fy+36);
+      ctx.font='21px Mukta, sans-serif';ctx.fillStyle='#2a1712';ctx.fillText(`सदस्य: ${d.totalMembers}  ·  जमा करने वाले: ${d.paid}  ·  बाकी: ${d.totalMembers-d.paid}`,40,fy+70);
+      fy+=90;
+    }
+    ctx.font='16px Mukta, sans-serif';ctx.fillStyle='#7a645a';ctx.textAlign='center';ctx.fillText('All rights reserved - Nexora - Digital & IT Agency',W/2,H-18);ctx.textAlign='left';
+    const suffix=totalPages>1?`-page${pi+1}`:'';
+    setTimeout(()=>downloadCanvas(cv,`Durga-Shakti-Collection-${d.M||'all'}${suffix}.png`),pi*600);
+  });
+  if(totalPages>1)toast(`${totalPages} PNG पेज डाउनलोड हो रहे हैं`);
 }
 function drawReportPNG(){
   const r=curRep||buildReport($('#rMonth').value||CUR,$('#rDue').checked);
-  const W=1100,rowH=42;
+  const W=1200;
+  const sums=[['पिछला शेष',rs(r.open)],['इस माह जमा',rs(r.in)],['सहायता खर्च',rs(r.out)],['खाते में शेष',rs(r.close)],['इस माह जमा करने वाले',String(r.paid.length)],['एडवांस से कवर',String(r.covCount)],['बाकी',String(r.dueCount)]];
   const paidRows=r.paid.length||1;
-  const H=150+5*44+60+paidRows*rowH+80;
+  const helpRows=r.help.length||0;
+  const dueNames=r.due||[];
+  const dueText=dueNames.join(', ');
+  let dueLines=0;
+  if(dueText){
+    const words=dueText.split(' ');
+    let line='',lines=1;
+    const meas=document.createElement('canvas').getContext('2d');
+    meas.font='21px Mukta, sans-serif';
+    words.forEach(w=>{const test=line?line+' '+w:w;if(meas.measureText(test).width>1060&&line){lines++;line=w;}else{line=test;}});
+    dueLines=lines;
+  }
+  const H=170+sums.length*52+50+44+paidRows*50+(helpRows?50+44+helpRows*50:0)+(dueText?50+44+dueLines*30:0)+80;
   const cv=document.createElement('canvas');cv.width=W;cv.height=H;const ctx=cv.getContext('2d');
   ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
-  ctx.fillStyle='#9e2019';ctx.fillRect(0,0,W,110);
-  ctx.fillStyle='#fff';ctx.font='700 30px Mukta, sans-serif';ctx.fillText('दुर्गा शक्ति फाउंडेशन',40,48);
-  ctx.font='20px Mukta, sans-serif';ctx.fillText(`${mL(r.month)} — मासिक रिपोर्ट`,40,82);
-  ctx.font='16px Mukta, sans-serif';ctx.fillText(`तारीख: ${TODAY.split('-').reverse().join('-')}  ·  कुल सदस्य: ${r.total}`,40,132);
-  ctx.fillStyle='#2a1712';ctx.font='19px Mukta, sans-serif';
-  const sums=[['पिछला शेष',rs(r.open)],['इस माह जमा',rs(r.in)],['सहायता खर्च',rs(r.out)],['खाते में शेष',rs(r.close)],['इस माह जमा करने वाले',String(r.paid.length)],['एडवांस से कवर',String(r.covCount)],['बाकी',String(r.dueCount)]];
-  sums.forEach((s,i)=>{const y=150+i*44;if(i%2===0){ctx.fillStyle='#faf6f1';ctx.fillRect(30,y,W-60,44);}ctx.fillStyle='#2a1712';ctx.fillText(s[0],40,y+28);ctx.fillText(s[1],600,y+28);});
-  let y=150+sums.length*44+20;
-  ctx.fillStyle='#9e2019';ctx.font='700 21px Mukta, sans-serif';ctx.fillText('इस माह जमा करने वाले',40,y+28);y+=44;
-  ctx.font='19px Mukta, sans-serif';ctx.fillStyle='#2a1712';
-  if(r.paid.length){r.paid.forEach(p=>{ctx.fillText(fitText(ctx,p.name,600),40,y+28);ctx.fillText(rs(p.amt),700,y+28);y+=rowH;});}
-  else{ctx.fillText('इस माह अभी कोई जमा नहीं।',40,y+28);y+=rowH;}
-  ctx.font='15px Mukta, sans-serif';ctx.fillStyle='#7a645a';ctx.textAlign='center';ctx.fillText('All rights reserved - Nexora - Digital & IT Agency',W/2,H-18);ctx.textAlign='left';
+  ctx.fillStyle='#9e2019';ctx.fillRect(0,0,W,120);
+  ctx.fillStyle='#fff';ctx.font='700 36px Mukta, sans-serif';ctx.fillText('दुर्गा शक्ति फाउंडेशन',40,52);
+  ctx.font='24px Mukta, sans-serif';ctx.fillText(`${mL(r.month)} — मासिक रिपोर्ट`,40,88);
+  ctx.font='18px Mukta, sans-serif';ctx.fillText(`तारीख: ${TODAY.split('-').reverse().join('-')}  ·  कुल सदस्य: ${r.total}`,40,138);
+  let y=170;
+  ctx.font='21px Mukta, sans-serif';
+  sums.forEach((s,i)=>{
+    if(i%2===0){ctx.fillStyle='#faf6f1';ctx.fillRect(30,y,W-60,52);}
+    ctx.fillStyle='#2a1712';
+    if(i===3)ctx.font='700 21px Mukta, sans-serif';else ctx.font='21px Mukta, sans-serif';
+    ctx.fillText(s[0],40,y+34);ctx.fillText(s[1],620,y+34);
+    y+=52;
+  });
+  y+=20;
+  ctx.fillStyle='#9e2019';ctx.font='700 23px Mukta, sans-serif';ctx.fillText('इस माह जमा करने वाले',40,y+28);y+=44;
+  ctx.font='21px Mukta, sans-serif';ctx.fillStyle='#2a1712';
+  if(r.paid.length){r.paid.forEach(p=>{ctx.fillText(fitText(ctx,p.name,640),40,y+32);ctx.fillText(rs(p.amt),720,y+32);y+=50;});}
+  else{ctx.fillText('इस माह अभी कोई जमा नहीं।',40,y+32);y+=50;}
+  if(r.help.length){
+    y+=10;ctx.fillStyle='#9e2019';ctx.font='700 23px Mukta, sans-serif';ctx.fillText('सहायता खर्च',40,y+28);y+=44;
+    ctx.font='21px Mukta, sans-serif';ctx.fillStyle='#2a1712';
+    r.help.forEach(hh=>{ctx.fillText(fitText(ctx,hh.desc,640),40,y+32);ctx.fillText(rs(hh.amt),720,y+32);y+=50;});
+  }
+  if(dueText){
+    y+=10;ctx.fillStyle='#9e2019';ctx.font='700 23px Mukta, sans-serif';ctx.fillText('बाकी सदस्य',40,y+28);y+=44;
+    ctx.font='21px Mukta, sans-serif';ctx.fillStyle='#2a1712';
+    const words=dueText.split(' ');let line='';
+    words.forEach(w=>{const test=line?line+' '+w:w;if(ctx.measureText(test).width>1060&&line){ctx.fillText(line,40,y+26);y+=30;line=w;}else{line=test;}});
+    if(line){ctx.fillText(line,40,y+26);y+=30;}
+  }
+  ctx.font='16px Mukta, sans-serif';ctx.fillStyle='#7a645a';ctx.textAlign='center';ctx.fillText('All rights reserved - Nexora - Digital & IT Agency',W/2,H-18);ctx.textAlign='left';
   downloadCanvas(cv,`Durga-Shakti-Monthly-Report-${r.month}.png`);
 }
 function downloadCSV(filename,rows){
