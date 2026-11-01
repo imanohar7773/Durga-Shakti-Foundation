@@ -1,0 +1,712 @@
+<title>दुर्गा शक्ति फाउंडेशन</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi&family=Mukta:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.14.1/firebase-app-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.14.1/firebase-auth-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.14.1/firebase-firestore-compat.js"></script>
+<style>
+/* Layout: kumkum login gate -> sticky header + tabs; public report is its own read-only view */
+:root{
+  --bg:#faf6f1; --surface:#ffffff; --line:#eadfd3; --ink:#2a1712; --muted:#7a645a;
+  --kumkum:#b3261e; --kumkum-soft:#fbe9e6; --marigold:#e8930c; --marigold-soft:#fdf1dc;
+  --ok:#2f7d4a; --ok-soft:#e5f3ea; --cov:#3b6aa8; --cov-soft:#e6eef8; --warn:#a85a00; --warn-soft:#fdf0dd;
+  --deep:#7d1712; --deep2:#9e2019; --gold:#f2ac3c; --cream:#fff6e6;
+  --f-display:"Tiro Devanagari Hindi",Georgia,serif;
+  --f-body:"Mukta",system-ui,-apple-system,sans-serif;
+  --f-num:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1a1210; --surface:#241915; --line:#3a2a24; --ink:#f4e9e2; --muted:#b39d92;
+  --kumkum:#ef6b5f; --kumkum-soft:#3a1d19; --marigold:#f2ac3c; --marigold-soft:#3a2a12;
+  --ok:#6cc58a; --ok-soft:#173022; --cov:#8db4ea; --cov-soft:#1a2638; --warn:#f0a94a; --warn-soft:#3a2810; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1a1210; --surface:#241915; --line:#3a2a24; --ink:#f4e9e2; --muted:#b39d92;
+  --kumkum:#ef6b5f; --kumkum-soft:#3a1d19; --marigold:#f2ac3c; --marigold-soft:#3a2a12;
+  --ok:#6cc58a; --ok-soft:#173022; --cov:#8db4ea; --cov-soft:#1a2638; --warn:#f0a94a; --warn-soft:#3a2810; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--deep)}
+.wrap{max-width:1000px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* credit line */
+.credit{font-size:.7rem;letter-spacing:.03em;opacity:.7;text-align:center}
+.credit b{font-weight:600}
+
+/* LOGIN */
+.login{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding-block:28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  color:var(--cream);background:
+  radial-gradient(60% 45% at 50% 0%,rgba(242,172,60,.28),transparent 70%),
+  radial-gradient(50% 40% at 50% 110%,rgba(242,172,60,.18),transparent 70%),
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='%23f2ac3c' stroke-opacity='.09'%3E%3Ccircle cx='28' cy='28' r='10'/%3E%3Cpath d='M28 8v40M8 28h40'/%3E%3C/g%3E%3C/svg%3E"),
+  var(--deep)}
+.login .credit{color:var(--cream)}
+.lcard{width:100%;max-width:380px;background:rgba(40,8,6,.55);border:1px solid rgba(242,172,60,.35);border-radius:20px;padding:28px 24px 22px;display:flex;flex-direction:column;gap:18px;backdrop-filter:blur(6px);box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.emblem{width:76px;height:76px;margin:0 auto;border-radius:50%;background:radial-gradient(circle at 50% 40%,#f7c25e,#d9800a);display:grid;place-items:center;box-shadow:0 0 0 6px rgba(242,172,60,.18),0 0 0 12px rgba(242,172,60,.07)}
+.emblem svg{width:44px;height:44px}
+.lcard h1{font-family:var(--f-display);font-weight:400;font-size:1.75rem;text-align:center;margin:0;line-height:1.2;color:#fff}
+.lcard .tag{text-align:center;font-size:.85rem;color:var(--gold);letter-spacing:.06em;margin-top:-10px}
+.lform{display:flex;flex-direction:column;gap:14px}
+.lform label{color:rgba(255,246,230,.8);font-size:.8rem;font-weight:500;display:flex;flex-direction:column;gap:6px}
+.lform input{background:rgba(255,246,230,.08);border:1px solid rgba(255,246,230,.22);color:#fff;border-radius:10px;padding:12px 14px;font-size:1rem;width:100%;font-family:var(--f-body)}
+.lform input::placeholder{color:rgba(255,246,230,.45)}
+.lform input:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:transparent}
+.pinwrap{position:relative}
+.pinwrap input{letter-spacing:.5em;font-family:var(--f-num);padding-right:52px}
+.eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:0;color:rgba(255,246,230,.7);padding:8px;cursor:pointer;border-radius:8px}
+.eye:focus-visible{outline:2px solid var(--gold)}
+.lbtn{background:var(--gold);color:#3a0c08;border:0;border-radius:10px;padding:13px;font:700 1rem var(--f-body);cursor:pointer;margin-top:4px}
+.lbtn:disabled{opacity:.6;cursor:wait}
+.lerr{min-height:1.3em;font-size:.85rem;color:#ffb4a8;text-align:center}
+.lfoot{display:flex;align-items:center;justify-content:center;gap:6px;font-size:.75rem;color:rgba(255,246,230,.6)}
+.lfoot svg{width:13px;height:13px}
+.publink{color:var(--gold);font-size:.85rem;text-decoration:none;border-bottom:1px dashed rgba(242,172,60,.5)}
+.mode{font-size:.72rem;background:rgba(242,172,60,.15);color:var(--gold);padding:4px 10px;border-radius:99px;align-self:center}
+
+/* APP */
+header.top{background:var(--deep2);color:#fff;position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+header.top .credit{background:var(--deep);color:#fff;padding-block:3px}
+header.top .wrap.h{padding-block:10px 0;display:flex;flex-direction:column;gap:8px}
+.brand{display:flex;align-items:center;gap:12px}
+.mark{width:38px;height:38px;border-radius:50%;background:#e8930c;display:grid;place-items:center;flex:none}
+.mark svg{width:22px;height:22px}
+.brand h1{font-family:var(--f-display);font-weight:400;font-size:1.35rem;margin:0;line-height:1.15}
+.sub{font-size:.78rem;opacity:.85}
+.who{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:.8rem}
+.who button{background:rgba(255,255,255,.12);color:#fff;border:0;border-radius:8px;padding:6px 10px;font:600 .8rem var(--f-body);cursor:pointer}
+.sync{width:8px;height:8px;border-radius:50%;background:#7fd69a;display:inline-block}
+.sync.off{background:#f2ac3c}
+nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+nav button{background:none;border:0;color:#fff;opacity:.72;font:600 .92rem var(--f-body);padding:8px 11px;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
+nav button[aria-selected="true"]{opacity:1;border-color:#f2ac3c}
+main .wrap{padding-block:20px 48px;display:flex;flex-direction:column;gap:16px}
+section{display:flex;flex-direction:column;gap:16px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:720px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}
+.stat .k{font-size:.74rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.stat .v{font-family:var(--f-num);font-size:1.3rem;margin-top:2px;font-variant-numeric:tabular-nums}
+.stat.hl{background:var(--deep2);border-color:var(--deep2);color:#fff}
+.stat.hl .k{color:#fff;opacity:.85}
+.bar{height:6px;background:var(--line);border-radius:3px;margin-top:8px;overflow:hidden;display:flex}
+.bar i{display:block;height:100%}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.ph{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:14px 16px;border-bottom:1px solid var(--line)}
+.ph h2{font-family:var(--f-display);font-weight:400;font-size:1.2rem;margin:0}
+.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font:600 .8rem var(--f-body);border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:99px;padding:5px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th,td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;background:var(--surface)}
+tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+th.n{font-family:var(--f-body)}
+td.sr{color:var(--muted);font-family:var(--f-num);font-size:.8rem;width:1%}
+.name{font-weight:600}
+.name small{display:block;font-weight:400;color:var(--muted);font-size:.8rem}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.78rem;font-weight:600}
+.pill.paid{background:var(--ok-soft);color:var(--ok)}
+.pill.cov{background:var(--cov-soft);color:var(--cov)}
+.pill.due{background:var(--kumkum-soft);color:var(--kumkum)}
+.pill.flag{background:var(--warn-soft);color:var(--warn)}
+form.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;padding:16px}
+label{display:flex;flex-direction:column;gap:4px;font-size:.8rem;color:var(--muted);font-weight:500;min-width:0}
+input,select,textarea{font:inherit;font-size:.95rem;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--marigold);outline-offset:1px}
+input[type=checkbox]{width:auto}
+.btn{font:600 .9rem var(--f-body);border:0;border-radius:8px;padding:9px 16px;cursor:pointer;background:var(--kumkum);color:#fff;text-decoration:none;display:inline-block}
+.btn.ghost{background:transparent;color:var(--kumkum);border:1px solid var(--line)}
+.btn.wa{background:#1f8f4e}
+.btn.sm{padding:4px 10px;font-size:.8rem}
+.btn.danger{background:var(--kumkum-soft);color:var(--kumkum)}
+.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.span2{grid-column:1/-1}
+.empty{padding:28px 16px;text-align:center;color:var(--muted);white-space:normal}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;font-weight:600;font-size:.9rem;z-index:20;max-width:90vw;text-align:center}
+.months{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:16px}
+@media (max-width:560px){.months{grid-template-columns:repeat(4,1fr)}}
+.mo{border-radius:8px;padding:7px 4px;text-align:center;font-size:.75rem;border:1px solid var(--line)}
+.mo b{display:block;font-family:var(--f-num);font-size:.78rem;font-weight:500}
+.mo.paid{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.mo.cov{background:var(--cov-soft);color:var(--cov);border-color:transparent}
+.mo.due{color:var(--muted)}
+.note{font-size:.85rem;color:var(--muted);padding:12px 16px 0;max-width:65ch}
+textarea{min-height:110px;font-family:var(--f-num);font-size:.8rem}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.8rem;color:var(--muted);padding:10px 16px;border-top:1px solid var(--line)}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:var(--c)}
+tr.total td{font-weight:700;background:var(--bg)}
+.hint{font-size:.8rem;color:var(--muted)}
+
+/* REPORT card (shared by report tab + public view) */
+.rep{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;max-width:640px;width:100%;margin:0 auto}
+.rep-h{background:var(--deep2);color:#fff;padding:18px 20px;display:flex;gap:14px;align-items:center}
+.rep-h h3{font-family:var(--f-display);font-weight:400;font-size:1.3rem;margin:0;line-height:1.2}
+.rep-h p{margin:0;font-size:.85rem;color:var(--gold)}
+.rep-sum{display:grid;grid-template-columns:1fr auto;gap:6px 16px;padding:16px 20px;border-bottom:1px solid var(--line);font-size:.95rem}
+.rep-sum .n{font-family:var(--f-num);text-align:right;font-variant-numeric:tabular-nums}
+.rep-sum .big{font-weight:700;font-size:1.1rem;padding-top:8px;border-top:1px dashed var(--line)}
+.rep-sec{padding:14px 20px;border-bottom:1px solid var(--line)}
+.rep-sec:last-child{border-bottom:0}
+.rep-sec h4{margin:0 0 8px;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.rep-list{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:.92rem}
+.rep-list .n{font-family:var(--f-num);text-align:right}
+.rep-counts{display:flex;gap:8px;flex-wrap:wrap}
+.rep-names{font-size:.85rem;color:var(--muted);line-height:1.7}
+.rep-foot{padding:10px 20px;font-size:.72rem;color:var(--muted);text-align:center;background:var(--bg)}
+.linkbox{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:0 16px 16px}
+.linkbox code{font-family:var(--f-num);font-size:.8rem;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;word-break:break-all;flex:1;min-width:0;user-select:all}
+.pub{min-height:100vh;display:flex;flex-direction:column;gap:16px;padding-block:20px 40px}
+.pub .credit{color:var(--muted)}
+.setup{max-width:560px;margin:40px auto;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;line-height:1.7}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<!-- LOGIN -->
+<div id="loginView" class="login" hidden>
+  <div class="credit">Made by <b>Manohar Singh</b> (imanohar7773)</div>
+  <div class="lcard">
+    <div class="emblem"><svg viewBox="0 0 24 24" fill="none" stroke="#5a0f0b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V6"/><path d="M12 2l-2 4h4z" fill="#5a0f0b"/><path d="M6 4c0 4 2 6 6 6s6-2 6-6"/><path d="M6 4l-1.2 2.2M18 4l1.2 2.2"/><path d="M9 18h6"/></svg></div>
+    <h1>दुर्गा शक्ति फाउंडेशन</h1>
+    <div class="tag">सहयोग राशि प्रबंधन</div>
+    <form class="lform" id="loginForm" autocomplete="on">
+      <label>उपयोगकर्ता नाम<input id="lUser" autocomplete="username" required placeholder="Mr. ..."></label>
+      <label>पिन
+        <div class="pinwrap"><input id="lPin" type="password" inputmode="numeric" autocomplete="current-password" required maxlength="12">
+        <button type="button" class="eye" id="eye" aria-label="पिन दिखाएँ"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+      </label>
+      <div class="lerr" id="lErr" role="alert"></div>
+      <button class="lbtn" id="lBtn" type="submit">लॉगिन करें</button>
+    </form>
+    <div class="lfoot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>सुरक्षित लॉगिन · 30 मिनट निष्क्रिय रहने पर अपने आप लॉगआउट</div>
+    <span class="mode" id="modeTag"></span>
+  </div>
+  <a class="publink" href="#report">सार्वजनिक मासिक हिसाब देखें</a>
+</div>
+
+<!-- SETUP NEEDED -->
+<div id="setupView" class="wrap" hidden>
+  <div class="setup">
+    <h2 style="font-family:var(--f-display);font-weight:400;margin-top:0">Firebase सेटअप बाकी है</h2>
+    <p>index.html में <b>FIREBASE_CONFIG</b> में अपने Firebase प्रोजेक्ट की config पेस्ट करें, फिर पेज रीफ़्रेश करें। पूरे स्टेप्स README में हैं।</p>
+    <p class="hint">Made by Manohar Singh (imanohar7773)</p>
+  </div>
+</div>
+
+<!-- PUBLIC REPORT -->
+<div id="pubView" hidden>
+  <div class="wrap pub">
+    <div class="credit">Made by <b>Manohar Singh</b> (imanohar7773)</div>
+    <div class="tools" style="justify-content:center"><select id="pubMonth" style="width:auto"></select></div>
+    <div id="pubBody"></div>
+    <div style="text-align:center"><a class="publink" style="color:var(--kumkum)" href="#">एडमिन लॉगिन</a></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="appView" hidden>
+<header class="top">
+  <div class="credit">Made by <b>Manohar Singh</b> (imanohar7773)</div>
+  <div class="wrap h">
+    <div class="brand">
+      <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="#5a0f0b" stroke-width="2" stroke-linecap="round"><path d="M12 22V6"/><path d="M12 2l-2 4h4z" fill="#5a0f0b"/><path d="M6 4c0 4 2 6 6 6s6-2 6-6"/></svg></div>
+      <div><h1>दुर्गा शक्ति फाउंडेशन</h1><div class="sub">सदस्य सहयोग राशि रजिस्टर</div></div>
+      <div class="who"><span class="sync" id="syncDot" title="लाइव सिंक"></span><button id="logout">लॉगआउट</button></div>
+    </div>
+    <nav role="tablist">
+      <button role="tab" data-tab="month" aria-selected="true">मासिक रजिस्टर</button>
+      <button role="tab" data-tab="pay">राशि जमा करें</button>
+      <button role="tab" data-tab="report">मासिक रिपोर्ट</button>
+      <button role="tab" data-tab="help">सहायता खर्च</button>
+      <button role="tab" data-tab="account">हिसाब</button>
+      <button role="tab" data-tab="ledger">सदस्य खाता</button>
+      <button role="tab" data-tab="members">सदस्य</button>
+      <button role="tab" data-tab="backup">बैकअप</button>
+    </nav>
+  </div>
+</header>
+
+<main><div class="wrap">
+
+<section data-view="month">
+  <div class="stats" id="stats"></div>
+  <div class="panel">
+    <div class="ph">
+      <h2 id="monthTitle"></h2>
+      <div class="tools"><input type="month" id="monthPick" style="width:auto"><input id="mSearch1" placeholder="नाम या क्रमांक खोजें" style="width:180px"></div>
+    </div>
+    <div class="ph" style="padding-block:10px"><div class="chips" id="filterChips"></div></div>
+    <div class="tbl"><table>
+      <thead><tr><th>क्र.</th><th>सदस्य</th><th>स्थिति</th><th class="n">इस माह जमा</th><th></th></tr></thead>
+      <tbody id="monthRows"></tbody>
+    </table></div>
+    <div class="legend"><span style="--c:var(--ok)">इस महीने जमा किया</span><span style="--c:var(--cov)">पहले की एडवांस राशि से कवर (√)</span><span style="--c:var(--kumkum)">बाकी</span></div>
+  </div>
+</section>
+
+<section data-view="pay" hidden>
+  <div class="panel">
+    <div class="ph"><h2>राशि जमा करें</h2></div>
+    <form class="grid" id="payForm">
+      <label class="span2">सदस्य (नाम या क्रमांक लिखें)<input id="pMember" list="memList" required autocomplete="off"></label>
+      <label>राशि (₹)<input type="number" id="pAmt" min="0" required inputmode="numeric"></label>
+      <label>जमा तारीख<input type="date" id="pDate" required></label>
+      <label>किस महीने से<input type="month" id="pFrom" required></label>
+      <label>किस महीने तक<input type="month" id="pTo" required></label>
+      <label>माध्यम<select id="pMode"><option>UPI</option><option>Cash</option><option>Bank</option><option>Cheque</option></select></label>
+      <label>नोट / UTR<input id="pNote" maxlength="120"></label>
+      <div class="actions span2"><button class="btn" type="submit">जमा सेव करें</button><span class="hint">एक साथ कई महीनों की राशि हो तो "तक" वाला महीना बदलें।</span></div>
+    </form>
+    <datalist id="memList"></datalist>
+  </div>
+  <div class="panel">
+    <div class="ph"><h2>सभी जमा</h2><input id="pSearch" placeholder="नाम खोजें" style="width:180px"></div>
+    <div class="tbl"><table>
+      <thead><tr><th>जमा माह</th><th>सदस्य</th><th class="n">राशि</th><th>कवर महीने</th><th>माध्यम</th><th>नोट</th><th></th></tr></thead>
+      <tbody id="payRows"></tbody>
+    </table></div>
+  </div>
+</section>
+
+<section data-view="report" hidden>
+  <div class="panel">
+    <div class="ph"><h2>मासिक रिपोर्ट</h2>
+      <div class="tools"><input type="month" id="rMonth" style="width:auto">
+      <label style="flex-direction:row;align-items:center;gap:6px;color:var(--ink)"><input type="checkbox" id="rDue">बाकी सदस्यों के नाम दिखाएँ</label></div>
+    </div>
+    <div style="padding:16px"><div id="repPreview"></div></div>
+    <div class="actions" style="padding:0 16px 16px">
+      <button class="btn" id="rCopy">WhatsApp संदेश कॉपी करें</button>
+      <a class="btn wa" id="rWa" target="_blank" rel="noopener">WhatsApp पर भेजें</a>
+      <button class="btn ghost" id="rPublish">ग्रुप लिंक पर पब्लिश करें</button>
+    </div>
+    <p class="note" style="padding-top:0">पब्लिश करने पर यह रिपोर्ट नीचे वाले लिंक पर सबको दिखेगी। लिंक एक बार ग्रुप में डाल दें, हर महीने पब्लिश करते ही नया हिसाब वहीं दिखेगा। वहाँ से कोई कुछ बदल नहीं सकता।</p>
+    <div class="linkbox" style="padding-top:10px"><code id="pubLink"></code><button class="btn sm ghost" id="copyLink">लिंक कॉपी करें</button></div>
+  </div>
+</section>
+
+<section data-view="help" hidden>
+  <div class="panel">
+    <div class="ph"><h2>सहायता / खर्च जोड़ें</h2></div>
+    <form class="grid" id="helpForm">
+      <label>तारीख<input type="date" id="hDate" required></label>
+      <label>राशि (₹)<input type="number" id="hAmt" min="1" required inputmode="numeric"></label>
+      <label class="span2">सहायता का विवरण<input id="hDesc" required maxlength="200" placeholder="किसको, किस काम के लिए"></label>
+      <div class="actions span2"><button class="btn" type="submit">सहायता सेव करें</button></div>
+    </form>
+  </div>
+  <div class="panel">
+    <div class="ph"><h2>सहायता सूची</h2></div>
+    <div class="tbl"><table>
+      <thead><tr><th>क्र.</th><th>तारीख</th><th>विवरण</th><th class="n">राशि</th><th></th></tr></thead>
+      <tbody id="helpRows"></tbody>
+    </table></div>
+  </div>
+</section>
+
+<section data-view="account" hidden>
+  <div class="panel">
+    <div class="ph"><h2>मासिक हिसाब</h2>
+      <label style="flex-direction:row;align-items:center;gap:8px">अगस्त 2026 से पहले खाते में ₹<input type="number" id="opening" style="width:110px"></label>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>महीना</th><th class="n">पिछला क्लोज़िंग</th><th class="n">इस माह जमा</th><th class="n">अब तक का टोटल</th><th class="n">सहायता</th><th class="n">शेष खाते में</th></tr></thead>
+      <tbody id="accRows"></tbody>
+    </table></div>
+  </div>
+</section>
+
+<section data-view="ledger" hidden>
+  <div class="panel">
+    <div class="ph"><h2>सदस्य खाता</h2>
+      <div class="tools"><input id="lMember" list="memList" placeholder="सदस्य चुनें" style="width:240px" autocomplete="off"><select id="lYear" style="width:auto"></select></div>
+    </div>
+    <div id="ledgerBody"></div>
+  </div>
+</section>
+
+<section data-view="members" hidden>
+  <div class="panel">
+    <div class="ph"><h2 id="mFormTitle">नया सदस्य</h2></div>
+    <form class="grid" id="memForm">
+      <input type="hidden" id="mId">
+      <label>क्रमांक<input type="number" id="mSr" required></label>
+      <label>नाम व गाँव<input id="mName" required maxlength="80" placeholder="श्री ... सिंह गाँव"></label>
+      <label>मोबाइल<input id="mPhone" inputmode="tel" maxlength="15"></label>
+      <div class="actions span2"><button class="btn" type="submit" id="mSave">सदस्य जोड़ें</button><button class="btn ghost" type="button" id="mCancel" hidden>रद्द करें</button></div>
+    </form>
+  </div>
+  <div class="panel">
+    <div class="ph"><h2 id="memCount">सभी सदस्य</h2><input id="mSearch" placeholder="नाम खोजें" style="width:180px"></div>
+    <div class="tbl"><table>
+      <thead><tr><th>क्र.</th><th>सदस्य</th><th>मोबाइल</th><th class="n">कुल जमा</th><th>कवर तक</th><th></th></tr></thead>
+      <tbody id="memRows"></tbody>
+    </table></div>
+  </div>
+</section>
+
+<section data-view="backup" hidden>
+  <div class="panel">
+    <div class="ph"><h2>बैकअप और इम्पोर्ट</h2></div>
+    <p class="note">पहली बार: Excel वाला डेटा (durga-shakti-data.json) यहाँ पेस्ट करके "इम्पोर्ट करें" दबाएँ। उसके बाद हर महीने बैकअप कॉपी करके अपने पास रख लें।</p>
+    <div style="padding:12px 16px 16px;display:flex;flex-direction:column;gap:10px">
+      <textarea id="bkText" placeholder="बैकअप / डेटा यहाँ पेस्ट करें"></textarea>
+      <div class="actions">
+        <button class="btn" id="bkCopy">बैकअप कॉपी करें</button>
+        <button class="btn ghost" id="bkCsv">Excel के लिए CSV कॉपी करें</button>
+        <button class="btn ghost" id="bkRestore">पेस्ट किया डेटा इम्पोर्ट करें</button>
+        
+      </div>
+    </div>
+  </div>
+</section>
+
+</div></main>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* ============ SETTINGS — DURGA APP, PURCHASE MIS SE ALAG ============
+   Firebase project wahi ho sakta hai, lekin DATA POORA ALAG HAI:
+   - Sirf ye collections: members, payments, help, settings/main, public/report
+   - Kabhi bhi pm_* / ginger_* collections ko touch NAHI karna.
+   - Local storage key bhi alag hai: dsf_fund_v3 (ginger_* nahi).
+   Purchase MIS ka data is app se na padha jayega, na badla jayega. */
+const DSF_COLLECTIONS = ['members','payments','help']; // Purchase MIS se alag, sirf ye
+/* ============ SETTINGS ============ */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyCVgNHEiedIAz6GJdFNfnGRBPUtX6vM6ko",
+  authDomain: "purchase-report-fb978.firebaseapp.com",
+  projectId: "purchase-report-fb978",
+  storageBucket: "purchase-report-fb978.firebasestorage.app",
+  messagingSenderId: "519728871190",
+  appId: "1:519728871190:web:edc388a5599cc4c85b8237"
+};
+const ADMIN_EMAIL = "admin@durgashaktifoundation.in";   // Firebase Auth me yahi user banana hai
+const ALLOWED_USERS = ["mrmanvandrasingh","manvandrasingh","mrmanvendrasingh","manvendrasingh"];
+const START='2026-08', IDLE_MIN=30, MAX_TRY=5, LOCK_MIN=5;
+
+
+/* ============ HELPERS ============ */
+const $=s=>document.querySelector(s);
+const rs=n=>'₹'+Number(n||0).toLocaleString('en-IN');
+const MS=['जन','फ़र','मार्च','अप्रै','मई','जून','जुला','अग','सित','अक्टू','नव','दिस'];
+const MF=['जनवरी','फ़रवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'];
+const pad=n=>String(n).padStart(2,'0');
+const now=new Date(), TODAY=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`, CUR=TODAY.slice(0,7);
+const uid=()=>{const a=new Uint8Array(10);crypto.getRandomValues(a);return [...a].map(x=>x.toString(36).padStart(2,'0')).join('').slice(0,16)};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const mL=k=>{const[y,m]=k.split('-');return MF[+m-1]+' '+y};
+const mS=k=>{const[y,m]=k.split('-');return MS[+m-1]+' '+y.slice(2)};
+const addM=(k,n)=>{let[y,m]=k.split('-').map(Number);m+=n;while(m>12){m-=12;y++}while(m<1){m+=12;y--}return `${y}-${pad(m)}`};
+const range=(a,b)=>{const o=[];for(let k=a;k<=b;k=addM(k,1))o.push(k);return o};
+const normUser=u=>(u||'').toLowerCase().replace(/[^a-z]/g,'');
+const fbPass=pin=>`dsf-${pin}-shakti`;
+const ls={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2600)}
+async function sha(t){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+const views=['loginView','setupView','pubView','appView'];
+const showView=v=>views.forEach(x=>$('#'+x).hidden=x!==v);
+
+let db={members:[],payments:[],help:[],opening:53251};
+const FIRE = !!(FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.projectId && window.firebase);
+
+/* ============ STORE ============ */
+let Store;
+if(FIRE){
+  firebase.initializeApp(FIREBASE_CONFIG);
+  const auth=firebase.auth(), fs=firebase.firestore();
+  let unsubs=[];
+  Store={
+    mode:'fire', auth, fs,
+    async login(pin){await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);return auth.signInWithEmailAndPassword(ADMIN_EMAIL,fbPass(pin))},
+    async logout(){unsubs.forEach(u=>u());unsubs=[];await auth.signOut()},
+    watch(){
+      const got=new Set();
+      const done=k=>{got.add(k);if(got.size>=4){$('#syncDot').classList.remove('off')}render()};
+      ['members','payments','help'].forEach(c=>unsubs.push(fs.collection(c).onSnapshot(s=>{db[c]=s.docs.map(d=>d.data());done(c)},err)));
+      unsubs.push(fs.doc('settings/main').onSnapshot(d=>{if(d.exists)db.opening=d.data().opening??53251;done('settings')},err));
+    },
+    put(c,o){return fs.collection(c).doc(o.id).set(o).catch(err)},
+    del(c,id){return fs.collection(c).doc(id).delete().catch(err)},
+    setOpening(v){return fs.doc('settings/main').set({opening:v},{merge:true}).catch(err)},
+    async putMany(items){for(let i=0;i<items.length;i+=400){const b=fs.batch();items.slice(i,i+400).forEach(([c,o])=>b.set(fs.collection(c).doc(o.id),o));await b.commit()}},
+    publish(month,data){return fs.doc('public/report').set({reports:{[month]:data},latest:month,updated:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})},
+    async getPublic(){const d=await fs.doc('public/report').get();return d.exists?d.data():null}
+  };
+}else{
+  const KEY='dsf_fund_v3'; // Durga alag key — Purchase MIS ki ginger_* keys se alag
+  Store={
+    mode:'local',
+    login:async()=>true, logout:async()=>{},
+    watch(){
+      let d=ls.get(KEY);
+      
+      if(d)db=Object.assign({members:[],payments:[],help:[],opening:53251},d);
+      render();
+    },
+    save(){ls.set(KEY,db)},
+    put(c,o){const i=db[c].findIndex(x=>x.id===o.id);if(i>=0)db[c][i]=o;else db[c].push(o);this.save();render()},
+    del(c,id){db[c]=db[c].filter(x=>x.id!==id);this.save();render()},
+    setOpening(v){db.opening=v;this.save();render()},
+    async putMany(items){items.forEach(([c,o])=>{const i=db[c].findIndex(x=>x.id===o.id);if(i>=0)db[c][i]=o;else db[c].push(o)});this.save();render()},
+    async publish(month,data){const p=ls.get(KEY+'_pub')||{reports:{}};p.reports[month]=data;p.latest=month;ls.set(KEY+'_pub',p)},
+    async getPublic(){return ls.get(KEY+'_pub')}
+  };
+}
+function err(e){console.error(e);if(e&&e.code==='permission-denied')toast('अनुमति नहीं है। Firestore rules जाँचें।');else toast('सेव नहीं हुआ, इंटरनेट जाँचें');$('#syncDot')?.classList.add('off')}
+
+
+/* ============ LOGIN + SECURITY ============ */
+const LK='dsf_lock';
+function lockLeft(){const l=ls.get(LK)||{n:0,until:0};return Math.max(0,l.until-Date.now())}
+function failTry(){const l=ls.get(LK)||{n:0,until:0};l.n++;if(l.n>=MAX_TRY){l.until=Date.now()+LOCK_MIN*60000;l.n=0}ls.set(LK,l);return l}
+$('#eye').onclick=()=>{const i=$('#lPin');i.type=i.type==='password'?'text':'password'};
+$('#modeTag').textContent=FIRE?'Firebase लाइव मोड · Purchase MIS se alag data':'प्रीव्यू मोड · डेटा सिर्फ़ इस ब्राउज़र में';
+$('#loginForm').onsubmit=async e=>{
+  e.preventDefault();const E=$('#lErr');E.textContent='';
+  const left=lockLeft();if(left){E.textContent=`बहुत ज़्यादा गलत कोशिश। ${Math.ceil(left/60000)} मिनट बाद फिर कोशिश करें।`;return}
+  const u=normUser($('#lUser').value), pin=$('#lPin').value.trim();
+  const btn=$('#lBtn');btn.disabled=true;btn.textContent='जाँच हो रही है…';
+  let ok=false;
+  try{
+    if(!ALLOWED_USERS.includes(u))throw {code:'bad'};
+    // User ka diya hua login: sirf yahi PIN chalega (galat PIN Firebase tak jayega hi nahi)
+    if(pin!=='6630')throw {code:'bad'};
+    if(FIRE){
+      try{await Store.login(pin);ok=true}
+      catch(ae){
+        // Auth user abhi project me bana nahi hai ya Auth enable nahi hai:
+        // login block mat karo — Firestore data store (Purchase MIS jaisa, open rules)
+        // se app chalega, aur Auth banne ke baad wahi PIN se Auth login bhi chalega.
+        if(ae&&ae.code&&(ae.code.indexOf('auth/')===0)){
+          sessionStorage.setItem('dsf_sess','1');sessionStorage.setItem('dsf_fb_fallback','1');ok=true;
+        } else throw ae;
+      }
+    }
+  }catch(x){
+    const l=failTry();
+    E.textContent=x.code==='auth/too-many-requests'?'बहुत ज़्यादा कोशिश, थोड़ी देर बाद करें।':x.code==='auth/network-request-failed'?'इंटरनेट नहीं है।':`नाम या पिन गलत है।${l.until?'':' बची कोशिश: '+(MAX_TRY-l.n)}`;
+  }
+  btn.disabled=false;btn.textContent='लॉगिन करें';$('#lPin').value='';
+  if(ok){ls.set(LK,{n:0,until:0});if(!FIRE)sessionStorage.setItem('dsf_sess','1');enterApp()}
+};
+let idleT;
+function resetIdle(){clearTimeout(idleT);idleT=setTimeout(()=>{doLogout('निष्क्रिय होने से लॉगआउट हुआ')},IDLE_MIN*60000)}
+['click','keydown','touchstart','scroll'].forEach(ev=>addEventListener(ev,()=>{if(!$('#appView').hidden)resetIdle()},{passive:true}));
+async function doLogout(msg){clearTimeout(idleT);try{sessionStorage.removeItem('dsf_sess');sessionStorage.removeItem('dsf_fb_fallback')}catch(e){}await Store.logout();db={members:[],payments:[],help:[],opening:53251};route();if(msg)toast(msg)}
+$('#logout').onclick=()=>doLogout('लॉगआउट हो गया');
+let entered=false;
+function enterApp(){showView('appView');if(!entered){entered=true;Store.watch()}resetIdle();render();if(sessionStorage.getItem('dsf_fb_fallback')==='1')toast('Firebase Auth user abhi set nahi hai — data Firestore se chal raha hai (Purchase MIS jaisa)')}
+
+function route(){
+  if(location.hash==='#report'){showView('pubView');loadPublic();return}
+  if(FIRE){const u=Store.auth.currentUser;if(u&&u.email===ADMIN_EMAIL)enterApp();else if(sessionStorage.getItem('dsf_sess')==='1')enterApp();else{entered=false;showView('loginView')}return}
+  
+  showView('setupView');
+}
+addEventListener('hashchange',route);
+
+/* ============ CORE ============ */
+const mem=id=>db.members.find(m=>m.id===id);
+const sorted=()=>db.members.slice().sort((a,b)=>a.sr-b.sr);
+const label=m=>`${m.sr} · ${m.name}`;
+const findMem=v=>{v=(v||'').trim();if(!v)return null;const sr=parseInt(v);if(!isNaN(sr)){const m=db.members.find(x=>x.sr===sr);if(m)return m}
+  return db.members.find(m=>label(m)===v)||db.members.find(m=>m.name===v)||null};
+function monthStatus(mid,M){
+  const ps=db.payments.filter(p=>p.mid===mid);
+  const recv=ps.filter(p=>p.month===M).reduce((s,p)=>s+Number(p.amt),0);
+  const cov=ps.filter(p=>p.from<=M&&M<=p.to);
+  const flag=cov.length&&cov.every(p=>!Number(p.amt));
+  if(recv>0)return{c:'paid',l:'जमा',recv};
+  if(cov.length)return{c:flag?'flag':'cov',l:flag?'√ राशि दर्ज नहीं':'√ कवर',recv};
+  return{c:'due',l:'बाकी',recv};
+}
+function accounts(){
+  const last=[CUR,...db.payments.map(p=>p.month),...db.help.map(h=>h.date.slice(0,7))].filter(k=>k>=START).sort().pop();
+  let open=Number(db.opening)||0;
+  return range(START,last).map(k=>{
+    const inn=db.payments.filter(p=>p.month===k).reduce((s,p)=>s+Number(p.amt),0);
+    const out=db.help.filter(h=>h.date.slice(0,7)===k).reduce((s,h)=>s+Number(h.amt),0);
+    const r={k,open,in:inn,out,close:open+inn-out};open=r.close;return r});
+}
+
+let filter='all';
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>show(b.dataset.tab));
+function show(t){document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t));
+  document.querySelectorAll('[data-view]').forEach(v=>v.hidden=v.dataset.view!==t);render();scrollTo(0,0)}
+$('#monthPick').value=CUR;$('#monthPick').min=START;$('#rMonth').value=CUR;$('#rMonth').min=START;
+$('#pDate').value=TODAY;$('#pFrom').value=CUR;$('#pTo').value=CUR;$('#hDate').value=TODAY;
+['#monthPick','#mSearch1','#pSearch','#mSearch','#rMonth','#rDue'].forEach(s=>$(s).addEventListener('input',render));
+const PUB_URL=location.origin+location.pathname+'#report';
+$('#pubLink').textContent=PUB_URL;
+
+function render(){
+  if($('#appView').hidden)return;
+  const M=$('#monthPick').value||CUR;
+  $('#memList').innerHTML=sorted().map(m=>`<option value="${esc(label(m))}">`).join('');
+
+  $('#monthTitle').textContent=mL(M)+' रजिस्टर';
+  const q1=$('#mSearch1').value.trim();
+  let cnt={paid:0,cov:0,due:0},got=0;
+  const all=sorted().map(m=>{const s=monthStatus(m.id,M);cnt[s.c==='flag'?'cov':s.c]++;got+=s.recv;return{m,s}});
+  const helpM=db.help.filter(h=>h.date.slice(0,7)===M).reduce((s,h)=>s+Number(h.amt),0);
+  const acc=accounts();const a=acc.find(x=>x.k===M)||acc[acc.length-1];const N=all.length||1;
+  $('#stats').innerHTML=`
+    <div class="stat hl"><div class="k">शेष खाते में</div><div class="v">${rs(a?a.close:db.opening)}</div></div>
+    <div class="stat"><div class="k">इस माह जमा</div><div class="v">${rs(got)}</div></div>
+    <div class="stat"><div class="k">इस माह सहायता</div><div class="v">${rs(helpM)}</div></div>
+    <div class="stat"><div class="k">सदस्य स्थिति</div><div class="v">${cnt.paid+cnt.cov} / ${all.length}</div>
+      <div class="bar"><i style="width:${cnt.paid/N*100}%;background:var(--ok)"></i><i style="width:${cnt.cov/N*100}%;background:var(--cov)"></i></div></div>`;
+  $('#filterChips').innerHTML=[['all','सभी',all.length],['paid','जमा',cnt.paid],['cov','√ कवर',cnt.cov],['due','बाकी',cnt.due]]
+    .map(([k,l,n])=>`<button class="chip" data-f="${k}" aria-pressed="${filter===k}">${l} · ${n}</button>`).join('');
+  document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{filter=b.dataset.f;render()});
+  const vis=all.filter(({m,s})=>(filter==='all'||(filter==='cov'?['cov','flag'].includes(s.c):s.c===filter))&&(!q1||m.name.includes(q1)||String(m.sr)===q1));
+  $('#monthRows').innerHTML=vis.map(({m,s})=>`<tr><td class="sr">${m.sr}</td><td class="name">${esc(m.name)}</td><td><span class="pill ${s.c}">${s.l}</span></td><td class="n">${s.recv?rs(s.recv):'—'}</td><td>${s.c==='due'?`<button class="btn sm ghost" data-quick="${m.id}">जमा करें</button>`:''}</td></tr>`).join('')
+    ||`<tr><td colspan="5" class="empty">${db.members.length?'इस फ़िल्टर में कोई सदस्य नहीं।':'अभी कोई सदस्य नहीं। "बैकअप" टैब से Excel डेटा इम्पोर्ट करें या "सदस्य" टैब से जोड़ें।'}</td></tr>`;
+  document.querySelectorAll('[data-quick]').forEach(b=>b.onclick=()=>{const m=mem(b.dataset.quick);show('pay');$('#pMember').value=label(m);$('#pFrom').value=M;$('#pTo').value=M;$('#pAmt').focus()});
+
+  const pq=$('#pSearch').value.trim();
+  const ps=db.payments.filter(p=>!pq||(mem(p.mid)?.name||'').includes(pq)).sort((a,b)=>b.month.localeCompare(a.month)||(mem(a.mid)?.sr||0)-(mem(b.mid)?.sr||0));
+  $('#payRows').innerHTML=ps.map(p=>`<tr><td>${mS(p.month)}</td><td class="name">${esc(mem(p.mid)?.name||'—')}</td><td class="n">${Number(p.amt)?rs(p.amt):'<span class="pill flag">दर्ज नहीं</span>'}</td><td>${p.from===p.to?mS(p.from):mS(p.from)+' – '+mS(p.to)}</td><td>${esc(p.mode)}</td><td>${esc(p.note)}</td><td><button class="btn sm danger" data-delpay="${p.id}">हटाएँ</button></td></tr>`).join('')||`<tr><td colspan="7" class="empty">कोई जमा नहीं मिला।</td></tr>`;
+  arm('[data-delpay]','delpay',id=>{Store.del('payments',id);toast('जमा हटाया')});
+
+  const hs=db.help.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  $('#helpRows').innerHTML=hs.map((h,i)=>`<tr><td class="sr">${hs.length-i}</td><td>${h.date.split('-').reverse().join('-')}</td><td style="white-space:normal">${esc(h.desc)}</td><td class="n">${rs(h.amt)}</td><td><button class="btn sm danger" data-delhelp="${h.id}">हटाएँ</button></td></tr>`).join('')||`<tr><td colspan="5" class="empty">अभी कोई सहायता दर्ज नहीं। ऊपर फ़ॉर्म से पहली सहायता जोड़ें।</td></tr>`;
+  arm('[data-delhelp]','delhelp',id=>{Store.del('help',id);toast('सहायता हटाई')});
+
+  if(document.activeElement!==$('#opening'))$('#opening').value=db.opening;
+  $('#accRows').innerHTML=acc.map(x=>`<tr><td>${mL(x.k)}</td><td class="n">${rs(x.open)}</td><td class="n">${rs(x.in)}</td><td class="n">${rs(x.open+x.in)}</td><td class="n">${x.out?rs(x.out):'—'}</td><td class="n" style="font-weight:700">${rs(x.close)}</td></tr>`).join('')
+    +`<tr class="total"><td>कुल</td><td></td><td class="n">${rs(acc.reduce((s,x)=>s+x.in,0))}</td><td></td><td class="n">${rs(acc.reduce((s,x)=>s+x.out,0))}</td><td class="n">${rs(acc.length?acc[acc.length-1].close:db.opening)}</td></tr>`;
+
+  const mq=$('#mSearch').value.trim();
+  $('#memCount').textContent=`सभी सदस्य (${db.members.length})`;
+  $('#memRows').innerHTML=sorted().filter(m=>!mq||m.name.includes(mq)||String(m.sr)===mq||(m.phone||'').includes(mq)).map(m=>{
+    const mp=db.payments.filter(p=>p.mid===m.id);const t=mp.reduce((s,p)=>s+Number(p.amt),0);const upto=mp.map(p=>p.to).sort().pop();
+    return `<tr><td class="sr">${m.sr}</td><td class="name">${esc(m.name)}</td><td>${esc(m.phone||'')}</td><td class="n">${t?rs(t):'—'}</td><td>${upto?mS(upto):'<span class="pill due">कुछ नहीं</span>'}</td><td><div style="display:flex;gap:6px"><button class="btn sm ghost" data-viewl="${m.id}">खाता</button><button class="btn sm ghost" data-edit="${m.id}">बदलें</button><button class="btn sm danger" data-delmem="${m.id}">हटाएँ</button></div></td></tr>`}).join('')||`<tr><td colspan="6" class="empty">कोई सदस्य नहीं मिला।</td></tr>`;
+  document.querySelectorAll('[data-viewl]').forEach(b=>b.onclick=()=>{$('#lMember').value=label(mem(b.dataset.viewl));show('ledger')});
+  document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{const m=mem(b.dataset.edit);$('#mId').value=m.id;$('#mSr').value=m.sr;$('#mName').value=m.name;$('#mPhone').value=m.phone||'';$('#mFormTitle').textContent='सदस्य बदलें';$('#mSave').textContent='बदलाव सेव करें';$('#mCancel').hidden=false;scrollTo(0,0);$('#mName').focus()});
+  arm('[data-delmem]','delmem',id=>{db.payments.filter(p=>p.mid===id).forEach(p=>Store.del('payments',p.id));Store.del('members',id);toast('सदस्य हटाया')});
+  if(!$('#mId').value&&document.activeElement!==$('#mSr'))$('#mSr').value=Math.max(0,...db.members.map(m=>m.sr))+1;
+
+  renderLedger();renderReport();
+}
+function arm(sel,attr,fn){document.querySelectorAll(sel).forEach(b=>b.onclick=()=>{
+  if(b.dataset.armed){fn(b.dataset[attr]);return}
+  b.dataset.armed=1;b.textContent='पक्का?';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='हटाएँ'}},3000)})}
+
+function renderLedger(){
+  const m=findMem($('#lMember').value);
+  const ys=[...new Set(['2026','2027',CUR.slice(0,4),...db.payments.map(p=>p.to.slice(0,4))])].sort();
+  const yv=$('#lYear').value||CUR.slice(0,4);$('#lYear').innerHTML=ys.map(y=>`<option>${y}</option>`).join('');$('#lYear').value=ys.includes(yv)?yv:ys[0];
+  if(!m){$('#ledgerBody').innerHTML='<div class="empty">ऊपर सदस्य का नाम या क्रमांक लिखें।</div>';return}
+  const Y=$('#lYear').value;
+  const cells=MS.map((n,i)=>{const k=`${Y}-${pad(i+1)}`;
+    if(k<START)return `<div class="mo" style="opacity:.35">${n}<b>—</b></div>`;
+    const s=monthStatus(m.id,k);
+    return `<div class="mo ${s.c==='flag'?'cov':s.c}">${n}<b>${s.recv?rs(s.recv):s.c==='due'?(k>CUR?'·':'बाकी'):'√'}</b></div>`}).join('');
+  const mp=db.payments.filter(p=>p.mid===m.id).sort((a,b)=>a.month.localeCompare(b.month));
+  const tot=mp.reduce((s,p)=>s+Number(p.amt),0);
+  $('#ledgerBody').innerHTML=`
+    <div class="ph" style="border-bottom:0"><div class="name" style="font-size:1.05rem">${esc(m.name)}<small>क्रमांक ${m.sr}${m.phone?' · '+esc(m.phone):''}</small></div>
+    <div class="stat" style="padding:8px 12px"><div class="k">कुल जमा</div><div class="v" style="font-size:1.05rem">${rs(tot)}</div></div></div>
+    <div class="months" style="padding-top:0">${cells}</div>
+    <div class="tbl"><table><thead><tr><th>जमा माह</th><th class="n">राशि</th><th>कवर महीने</th><th>माध्यम</th><th>नोट</th></tr></thead><tbody>
+    ${mp.map(p=>`<tr><td>${mL(p.month)}</td><td class="n">${Number(p.amt)?rs(p.amt):'—'}</td><td>${p.from===p.to?mS(p.from):mS(p.from)+' – '+mS(p.to)}</td><td>${esc(p.mode)}</td><td>${esc(p.note)}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">अभी तक कोई जमा नहीं।</td></tr>'}
+    </tbody></table></div>`;
+}
+$('#lMember').addEventListener('input',renderLedger);$('#lYear').onchange=renderLedger;
+
+/* ============ REPORT ============ */
+function buildReport(M,withDue){
+  const acc=accounts().find(x=>x.k===M)||{open:Number(db.opening)||0,in:0,out:0,close:Number(db.opening)||0};
+  const paid=[],cov=[],due=[];
+  sorted().forEach(m=>{const s=monthStatus(m.id,M);const r={sr:m.sr,name:m.name,amt:s.recv};(s.c==='paid'?paid:s.c==='due'?due:cov).push(r)});
+  const help=db.help.filter(h=>h.date.slice(0,7)===M).map(h=>({date:h.date,desc:h.desc,amt:Number(h.amt)}));
+  return {month:M,open:acc.open,in:acc.in,out:acc.out,close:acc.close,paid,covCount:cov.length,dueCount:due.length,due:withDue?due.map(d=>d.name):[],help,total:db.members.length,at:new Date().toISOString()};
+}
+function reportHTML(r){
+  return `<div class="rep">
+    <div class="rep-h"><div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="#5a0f0b" stroke-width="2" stroke-linecap="round"><path d="M12 22V6"/><path d="M12 2l-2 4h4z" fill="#5a0f0b"/><path d="M6 4c0 4 2 6 6 6s6-2 6-6"/></svg></div>
+      <div><h3>दुर्गा शक्ति फाउंडेशन</h3><p>${mL(r.month)} · मासिक हिसाब</p></div></div>
+    <div class="rep-sum">
+      <span>पिछला शेष</span><span class="n">${rs(r.open)}</span>
+      <span>इस माह जमा</span><span class="n" style="color:var(--ok)">+ ${rs(r.in)}</span>
+      <span>सहायता खर्च</span><span class="n" style="color:var(--kumkum)">− ${rs(r.out)}</span>
+      <span class="big">खाते में शेष</span><span class="n big">${rs(r.close)}</span>
+    </div>
+    <div class="rep-sec"><h4>सदस्य स्थिति (कुल ${r.total})</h4><div class="rep-counts">
+      <span class="pill paid">इस माह जमा · ${r.paid.length}</span><span class="pill cov">एडवांस से कवर · ${r.covCount}</span><span class="pill due">बाकी · ${r.dueCount}</span></div></div>
+    <div class="rep-sec"><h4>इस माह जमा करने वाले</h4>${r.paid.length?`<div class="rep-list">${r.paid.map(p=>`<span>${esc(p.name)}</span><span class="n">${rs(p.amt)}</span>`).join('')}</div>`:'<div class="rep-names">इस माह अभी कोई जमा नहीं।</div>'}</div>
+    ${r.help.length?`<div class="rep-sec"><h4>सहायता खर्च</h4><div class="rep-list">${r.help.map(h=>`<span>${esc(h.desc)}</span><span class="n">${rs(h.amt)}</span>`).join('')}</div></div>`:''}
+    ${r.due&&r.due.length?`<div class="rep-sec"><h4>बाकी सदस्य</h4><div class="rep-names">${r.due.map(esc).join(' · ')}</div></div>`:''}
+    <div class="rep-foot">Made by Manohar Singh (imanohar7773)</div>
+  </div>`;
+}
+function reportText(r){
+  let t=`🙏 *दुर्गा शक्ति फाउंडेशन*\n*${mL(r.month)} — मासिक हिसाब*\n\n`;
+  t+=`पिछला शेष: ${rs(r.open)}\nइस माह जमा: ${rs(r.in)}\nसहायता खर्च: ${rs(r.out)}\n*खाते में शेष: ${rs(r.close)}*\n\n`;
+  t+=`✅ *इस माह जमा (${r.paid.length})*\n`+(r.paid.length?r.paid.map((p,i)=>`${i+1}. ${p.name} — ${rs(p.amt)}`).join('\n'):'अभी कोई नहीं')+'\n\n';
+  if(r.help.length)t+=`🤝 *सहायता*\n`+r.help.map((h,i)=>`${i+1}. ${h.desc} — ${rs(h.amt)}`).join('\n')+'\n\n';
+  t+=`☑️ एडवांस से कवर: ${r.covCount} सदस्य\n⏳ बाकी: ${r.dueCount} सदस्य\n`;
+  if(r.due&&r.due.length)t+=r.due.join(', ')+'\n';
+  t+=`\nपूरा हिसाब: ${PUB_URL}\n\n_Made by Manohar Singh_`;
+  return t;
+}
+let curRep;
+function renderReport(){
+  const M=$('#rMonth').value||CUR;curRep=buildReport(M,$('#rDue').checked);
+  $('#repPreview').innerHTML=reportHTML(curRep);
+  $('#rWa').href='https://wa.me/?text='+encodeURIComponent(reportText(curRep));
+}
+$('#rCopy').onclick=()=>copy(reportText(curRep),'संदेश कॉपी हुआ, ग्रुप में पेस्ट करें');
+$('#copyLink').onclick=()=>copy(PUB_URL,'लिंक कॉपी हुआ');
+$('#rPublish').onclick=async()=>{try{await Store.publish(curRep.month,curRep);toast(mL(curRep.month)+' की रिपोर्ट पब्लिश हुई')}catch(e){err(e)}};
+
+async function loadPublic(){
+  $('#pubBody').innerHTML='<div class="empty">हिसाब लोड हो रहा है…</div>';
+  try{
+    const p=await Store.getPublic();
+    if(!p||!p.reports||!Object.keys(p.reports).length){$('#pubBody').innerHTML='<div class="empty">अभी कोई रिपोर्ट पब्लिश नहीं हुई है।</div>';$('#pubMonth').hidden=true;return}
+    const ks=Object.keys(p.reports).sort().reverse();
+    $('#pubMonth').hidden=false;$('#pubMonth').innerHTML=ks.map(k=>`<option value="${k}">${mL(k)}</option>`).join('');
+    const draw=()=>$('#pubBody').innerHTML=reportHTML(p.reports[$('#pubMonth').value]);
+    $('#pubMonth').onchange=draw;draw();
+  }catch(e){$('#pubBody').innerHTML='<div class="empty">रिपोर्ट नहीं खुली। इंटरनेट जाँचें।</div>'}
+}
+
+/* ============ FORMS ============ */
+$('#pFrom').onchange=()=>{if($('#pTo').value<$('#pFrom').value)$('#pTo').value=$('#pFrom').value};
+$('#payForm').onsubmit=e=>{e.preventDefault();const m=findMem($('#pMember').value);
+  if(!m)return toast('सदस्य नहीं मिला, सूची से नाम चुनें');
+  if($('#pTo').value<$('#pFrom').value)return toast('"तक" वाला महीना "से" के बाद होना चाहिए');
+  Store.put('payments',{id:uid(),mid:m.id,month:$('#pDate').value.slice(0,7),date:$('#pDate').value,amt:Number($('#pAmt').value),from:$('#pFrom').value,to:$('#pTo').value,mode:$('#pMode').value,note:$('#pNote').value.trim()});
+  $('#pMember').value='';$('#pAmt').value='';$('#pNote').value='';toast(m.name+' की राशि जमा हुई')};
+$('#helpForm').onsubmit=e=>{e.preventDefault();Store.put('help',{id:uid(),date:$('#hDate').value,amt:Number($('#hAmt').value),desc:$('#hDesc').value.trim()});
+  $('#hAmt').value='';$('#hDesc').value='';toast('सहायता दर्ज हुई')};
+$('#opening').onchange=()=>{Store.setOpening(Number($('#opening').value)||0);toast('ओपनिंग राशि अपडेट हुई')};
+function resetMem(){$('#memForm').reset();$('#mId').value='';$('#mFormTitle').textContent='नया सदस्य';$('#mSave').textContent='सदस्य जोड़ें';$('#mCancel').hidden=true;render()}
+$('#mCancel').onclick=resetMem;
+$('#memForm').onsubmit=e=>{e.preventDefault();const id=$('#mId').value;const sr=Number($('#mSr').value);
+  if(db.members.some(m=>m.sr===sr&&m.id!==id))return toast('यह क्रमांक पहले से है');
+  const o={id:id||uid(),sr,name:$('#mName').value.trim(),phone:$('#mPhone').value.trim()};
+  Store.put('members',o);resetMem();toast(id?'सदस्य अपडेट हुआ':'सदस्य जुड़ गया')};
+
+/* ============ BACKUP ============ */
+async function copy(t,msg){try{await navigator.clipboard.writeText(t);toast(msg||'कॉपी हो गया')}catch(e){$('#bkText').value=t;show('backup');$('#bkText').select();toast('टेक्स्ट चुना है, कॉपी करें')}}
+$('#bkCopy').onclick=()=>copy(JSON.stringify({members:db.members,payments:db.payments,help:db.help,opening:db.opening}));
+$('#bkCsv').onclick=()=>{const q=v=>`"${String(v??'').replace(/"/g,'""')}"`;
+  copy(['Sr,Member,Received Month,Amount,Covers From,Covers To,Mode,Note',...db.payments.map(p=>{const m=mem(p.mid)||{};return [m.sr,m.name,p.month,p.amt,p.from,p.to,p.mode,p.note].map(q).join(',')})].join('\n'))};
+$('#bkRestore').onclick=async()=>{let d;try{d=JSON.parse($('#bkText').value)}catch(e){return toast('डेटा सही नहीं है, पूरा टेक्स्ट पेस्ट करें')}
+  if(!Array.isArray(d.members)||!Array.isArray(d.payments))return toast('डेटा सही नहीं है');
+  const items=[...d.members.map(o=>['members',o]),...d.payments.map(o=>['payments',o]),...(d.help||[]).map(o=>['help',o])];
+  try{await Store.putMany(items);if(d.opening!=null)await Store.setOpening(Number(d.opening));$('#bkText').value='';toast(`${d.members.length} सदस्य, ${d.payments.length} जमा इम्पोर्ट हुए`)}catch(e){err(e)}};
+
+
+/* ============ START ============ */
+if(FIRE)Store.auth.onAuthStateChanged(u=>{if(u&&u.email!==ADMIN_EMAIL){Store.auth.signOut();return}route()});
+else route();
+</script>
