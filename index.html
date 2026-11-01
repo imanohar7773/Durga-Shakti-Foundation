@@ -193,6 +193,7 @@ tr.total td{font-weight:700;background:var(--bg)}
     <div class="lfoot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>सुरक्षित लॉगिन · 30 मिनट निष्क्रिय रहने पर अपने आप लॉगआउट</div>
   </div>
   <a class="publink" href="#report">सार्वजनिक मासिक हिसाब देखें</a>
+  <div class="credit">All rights reserved - Nexora - Digital &amp; IT Agency</div>
 </div>
 
 <!-- SETUP NEEDED -->
@@ -211,6 +212,7 @@ tr.total td{font-weight:700;background:var(--bg)}
     <div class="tools" style="justify-content:center"><select id="pubMonth" style="width:auto"></select></div>
     <div id="pubBody"></div>
     <div style="text-align:center"><a class="publink" style="color:var(--kumkum)" href="#">एडमिन लॉगिन</a></div>
+    <div class="credit" style="margin-top:12px">All rights reserved - Nexora - Digital &amp; IT Agency</div>
   </div>
 </div>
 
@@ -230,6 +232,7 @@ tr.total td{font-weight:700;background:var(--bg)}
       <button role="tab" data-tab="help">सहायता खर्च</button>
       <button role="tab" data-tab="account">हिसाब</button>
       <button role="tab" data-tab="ledger">सदस्य खाता</button>
+      <button role="tab" data-tab="collection">कलेक्शन सूची</button>
       <button role="tab" data-tab="members">सदस्य</button>
       <button role="tab" data-tab="backup">बैकअप</button>
     </nav>
@@ -289,9 +292,30 @@ tr.total td{font-weight:700;background:var(--bg)}
       <button class="btn" id="rCopy">WhatsApp संदेश कॉपी करें</button>
       <a class="btn wa" id="rWa" target="_blank" rel="noopener">WhatsApp पर भेजें</a>
       <button class="btn ghost" id="rPublish">ग्रुप लिंक पर पब्लिश करें</button>
+      <button class="btn ghost" id="rPng">PNG डाउनलोड करें</button>
+      <button class="btn ghost" id="rXls">Excel डाउनलोड करें</button>
     </div>
     <p class="note" style="padding-top:0">पब्लिश करने पर यह रिपोर्ट नीचे वाले लिंक पर सबको दिखेगी। लिंक एक बार ग्रुप में डाल दें, हर महीने पब्लिश करते ही नया हिसाब वहीं दिखेगा। वहाँ से कोई कुछ बदल नहीं सकता।</p>
     <div class="linkbox" style="padding-top:10px"><code id="pubLink"></code><button class="btn sm ghost" id="copyLink">लिंक कॉपी करें</button></div>
+  </div>
+</section>
+
+<section data-view="collection" hidden>
+  <div class="panel">
+    <div class="ph"><h2>सभी सदस्य व कलेक्शन सूची</h2>
+      <div class="tools"><select id="cMonth" style="width:auto"></select><input id="cSearch" placeholder="नाम या क्रमांक खोजें" style="width:180px"></div>
+    </div>
+    <div class="stats" id="cStats" style="padding:16px"></div>
+    <div class="tbl"><table>
+      <thead><tr><th>क्र.</th><th>सदस्य</th><th>मोबाइल</th><th class="n">जमा</th><th>कवर तक</th><th>स्थिति</th></tr></thead>
+      <tbody id="cRows"></tbody>
+    </table></div>
+    <div class="ph" style="border-top:1px solid var(--line)"><div id="cTotals" style="font-weight:700"></div></div>
+    <div class="actions" style="padding:0 16px 16px">
+      <button class="btn" id="cPng">PNG डाउनलोड करें</button>
+      <button class="btn ghost" id="cCsv">Excel डाउनलोड करें</button>
+    </div>
+    <p class="note" style="padding-top:0">महीना चुनें तो सिर्फ उस महीने का जमा दिखेगा, “सभी महीने” चुनें तो अब तक का कुल जमा दिखेगा। नीचे कुल कलेक्शन भी दिया है।</p>
   </div>
 </section>
 
@@ -372,6 +396,7 @@ tr.total td{font-weight:700;background:var(--bg)}
 </section>
 
 </div></main>
+<footer style="text-align:center;padding:16px;font-size:.75rem;color:var(--muted)">All rights reserved - Nexora - Digital &amp; IT Agency</footer>
 </div>
 <div class="toast" id="toast" hidden></div>
 
@@ -517,11 +542,12 @@ function route(){
 addEventListener('hashchange',route);
 
 /* ============ CORE ============ */
+const stripShri=s=>(s||'').trim().replace(/^श्री[.\s]+/,'').trim();
 const mem=id=>db.members.find(m=>m.id===id);
 const sorted=()=>db.members.slice().sort((a,b)=>a.sr-b.sr);
 const label=m=>`${m.sr} · ${m.name}`;
 const findMem=v=>{v=(v||'').trim();if(!v)return null;const sr=parseInt(v);if(!isNaN(sr)){const m=db.members.find(x=>x.sr===sr);if(m)return m}
-  return db.members.find(m=>label(m)===v)||db.members.find(m=>m.name===v)||null};
+  return db.members.find(m=>label(m)===v)||db.members.find(m=>m.name===v)||db.members.find(m=>stripShri(m.name)===stripShri(v))||null};
 function monthStatus(mid,M){
   const ps=db.payments.filter(p=>p.mid===mid);
   const recv=ps.filter(p=>p.month===M).reduce((s,p)=>s+Number(p.amt),0);
@@ -598,7 +624,7 @@ function render(){
   arm('[data-delmem]','delmem',id=>{db.payments.filter(p=>p.mid===id).forEach(p=>Store.del('payments',p.id));Store.del('members',id);toast('सदस्य हटाया')});
   if(!$('#mId').value&&document.activeElement!==$('#mSr'))$('#mSr').value=Math.max(0,...db.members.map(m=>m.sr))+1;
 
-  renderLedger();renderReport();
+  renderLedger();renderReport();renderCollection();
 }
 function arm(sel,attr,fn){document.querySelectorAll(sel).forEach(b=>b.onclick=()=>{
   if(b.dataset.armed){fn(b.dataset[attr]);return}
@@ -649,7 +675,7 @@ function reportHTML(r){
     <div class="rep-sec"><h4>इस माह जमा करने वाले</h4>${r.paid.length?`<div class="rep-list">${r.paid.map(p=>`<span>${esc(p.name)}</span><span class="n">${rs(p.amt)}</span>`).join('')}</div>`:'<div class="rep-names">इस माह अभी कोई जमा नहीं।</div>'}</div>
     ${r.help.length?`<div class="rep-sec"><h4>सहायता खर्च</h4><div class="rep-list">${r.help.map(h=>`<span>${esc(h.desc)}</span><span class="n">${rs(h.amt)}</span>`).join('')}</div></div>`:''}
     ${r.due&&r.due.length?`<div class="rep-sec"><h4>बाकी सदस्य</h4><div class="rep-names">${r.due.map(esc).join(' · ')}</div></div>`:''}
-    <div class="rep-foot">Made by Manohar Singh (imanohar7773)</div>
+    <div class="rep-foot">Made by Manohar Singh (imanohar7773)<br>All rights reserved - Nexora - Digital &amp; IT Agency</div>
   </div>`;
 }
 function reportText(r){
@@ -698,8 +724,109 @@ function resetMem(){$('#memForm').reset();$('#mId').value='';$('#mFormTitle').te
 $('#mCancel').onclick=resetMem;
 $('#memForm').onsubmit=e=>{e.preventDefault();const id=$('#mId').value;const sr=Number($('#mSr').value);
   if(db.members.some(m=>m.sr===sr&&m.id!==id))return toast('यह क्रमांक पहले से है');
-  const o={id:id||uid(),sr,name:$('#mName').value.trim(),phone:$('#mPhone').value.trim()};
+  const o={id:id||uid(),sr,name:stripShri($('#mName').value),phone:$('#mPhone').value.trim()};
   Store.put('members',o);resetMem();toast(id?'सदस्य अपडेट हुआ':'सदस्य जुड़ गया')};
+
+/* ============ COLLECTION LIST + PNG + EXCEL (v6) ============ */
+function collectionData(){
+  const M=$('#cMonth').value||'';
+  const q=($('#cSearch').value||'').trim();
+  const rows=sorted().filter(m=>!q||m.name.includes(q)||stripShri(m.name).includes(q)||String(m.sr)===q).map(m=>{
+    const ps=db.payments.filter(p=>p.mid===m.id);
+    let amt,upto,status;
+    if(M){const s=monthStatus(m.id,M);amt=s.recv;status=s.l;upto=ps.map(p=>p.to).sort().pop();}
+    else{amt=ps.reduce((s,p)=>s+Number(p.amt),0);upto=ps.map(p=>p.to).sort().pop();status=amt>0?'जमा':'बाकी';}
+    return {m,amt,upto,status};
+  });
+  const total=rows.reduce((s,r)=>s+r.amt,0);
+  const paid=rows.filter(r=>r.amt>0).length;
+  return {M,rows,total,paid,totalMembers:rows.length};
+}
+function renderCollection(){
+  if(!$('#cMonth'))return;
+  const months=new Set([CUR]);range(START,CUR).forEach(k=>months.add(k));db.payments.forEach(p=>months.add(p.month));
+  const opts=['',...[...months].sort().reverse()];
+  const cur=$('#cMonth').value;
+  $('#cMonth').innerHTML=opts.map(k=>`<option value="${k}">${k?mL(k):'सभी महीने'}</option>`).join('');
+  if(opts.includes(cur))$('#cMonth').value=cur;else $('#cMonth').value='';
+  const d=collectionData();
+  $('#cStats').innerHTML=`<div class="stat hl"><div class="k">कुल कलेक्शन</div><div class="v">${rs(d.total)}</div></div><div class="stat"><div class="k">सदस्य</div><div class="v">${d.totalMembers}</div></div><div class="stat"><div class="k">जमा करने वाले</div><div class="v">${d.paid}</div></div><div class="stat"><div class="k">बाकी</div><div class="v">${d.totalMembers-d.paid}</div></div>`;
+  $('#cRows').innerHTML=d.rows.map(r=>`<tr><td class="sr">${r.m.sr}</td><td class="name">${esc(r.m.name)}</td><td>${esc(r.m.phone||'')}</td><td class="n">${r.amt?rs(r.amt):'—'}</td><td>${r.upto?mS(r.upto):'—'}</td><td><span class="pill ${r.amt>0?'paid':'due'}">${r.status}</span></td></tr>`).join('')||`<tr><td colspan="6" class="empty">कोई सदस्य नहीं मिला।</td></tr>`;
+  $('#cTotals').textContent=`कुल कलेक्शन: ${rs(d.total)}  ·  सदस्य: ${d.totalMembers}  ·  जमा करने वाले: ${d.paid}  ·  बाकी: ${d.totalMembers-d.paid}  ·  महीना: ${d.M?mL(d.M):'सभी महीने'}`;
+}
+$('#cMonth').onchange=renderCollection;$('#cSearch').addEventListener('input',renderCollection);
+function downloadCanvas(cv,filename){cv.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),3000)},'image/png')}
+function fitText(ctx,t,maxW){let s=t;while(s&&ctx.measureText(s).width>maxW){s=s.slice(0,-1)}if(s!==t)s=s.slice(0,-1)+'…';return s}
+function drawCollectionPNG(){
+  const d=collectionData();const W=1100,rowH=44,headH=150,footH=110;
+  const H=headH+44+d.rows.length*rowH+footH;
+  const cv=document.createElement('canvas');cv.width=W;cv.height=H;const ctx=cv.getContext('2d');
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#9e2019';ctx.fillRect(0,0,W,110);
+  ctx.fillStyle='#fff';ctx.font='700 30px Mukta, sans-serif';ctx.fillText('दुर्गा शक्ति फाउंडेशन',40,48);
+  ctx.font='20px Mukta, sans-serif';ctx.fillText(`सदस्य कलेक्शन सूची — ${d.M?mL(d.M):'सभी महीने'}`,40,82);
+  ctx.font='16px Mukta, sans-serif';ctx.fillText(`तारीख: ${TODAY.split('-').reverse().join('-')}  ·  सदस्य: ${d.totalMembers}`,40,132);
+  ctx.fillStyle='#2a1712';ctx.fillRect(30,headH,W-60,44);
+  ctx.fillStyle='#fff';ctx.font='700 19px Mukta, sans-serif';
+  [['क्र.',40],['सदस्य',110],['मोबाइल',530],['जमा',680],['कवर तक',830],['स्थिति',950]].forEach(([t,x])=>ctx.fillText(t,x,headH+29));
+  ctx.font='19px Mukta, sans-serif';
+  d.rows.forEach((r,i)=>{const y=headH+44+i*rowH;
+    if(i%2===0){ctx.fillStyle='#faf6f1';ctx.fillRect(30,y,W-60,rowH);}
+    ctx.fillStyle='#2a1712';
+    ctx.fillText(String(r.m.sr),40,y+28);
+    ctx.fillText(fitText(ctx,r.m.name,400),110,y+28);
+    ctx.fillText(r.m.phone||'—',530,y+28);
+    ctx.fillText(r.amt?rs(r.amt):'—',680,y+28);
+    ctx.fillText(r.upto?mS(r.upto):'—',830,y+28);
+    ctx.fillText(r.status,950,y+28);
+    ctx.strokeStyle='#eadfd3';ctx.beginPath();ctx.moveTo(30,y+rowH);ctx.lineTo(W-30,y+rowH);ctx.stroke();});
+  const fy=headH+44+d.rows.length*rowH+20;
+  ctx.fillStyle='#9e2019';ctx.font='700 22px Mukta, sans-serif';ctx.fillText(`कुल कलेक्शन: ${rs(d.total)}`,40,fy+28);
+  ctx.font='19px Mukta, sans-serif';ctx.fillStyle='#2a1712';ctx.fillText(`सदस्य: ${d.totalMembers}  ·  जमा करने वाले: ${d.paid}  ·  बाकी: ${d.totalMembers-d.paid}`,40,fy+58);
+  ctx.font='15px Mukta, sans-serif';ctx.fillStyle='#7a645a';ctx.textAlign='center';ctx.fillText('All rights reserved - Nexora - Digital & IT Agency',W/2,H-18);ctx.textAlign='left';
+  downloadCanvas(cv,`Durga-Shakti-Collection-${d.M||'all'}.png`);
+}
+function drawReportPNG(){
+  const r=curRep||buildReport($('#rMonth').value||CUR,$('#rDue').checked);
+  const W=1100,rowH=42;
+  const paidRows=r.paid.length||1;
+  const H=150+5*44+60+paidRows*rowH+80;
+  const cv=document.createElement('canvas');cv.width=W;cv.height=H;const ctx=cv.getContext('2d');
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#9e2019';ctx.fillRect(0,0,W,110);
+  ctx.fillStyle='#fff';ctx.font='700 30px Mukta, sans-serif';ctx.fillText('दुर्गा शक्ति फाउंडेशन',40,48);
+  ctx.font='20px Mukta, sans-serif';ctx.fillText(`${mL(r.month)} — मासिक रिपोर्ट`,40,82);
+  ctx.font='16px Mukta, sans-serif';ctx.fillText(`तारीख: ${TODAY.split('-').reverse().join('-')}  ·  कुल सदस्य: ${r.total}`,40,132);
+  ctx.fillStyle='#2a1712';ctx.font='19px Mukta, sans-serif';
+  const sums=[['पिछला शेष',rs(r.open)],['इस माह जमा',rs(r.in)],['सहायता खर्च',rs(r.out)],['खाते में शेष',rs(r.close)],['इस माह जमा करने वाले',String(r.paid.length)],['एडवांस से कवर',String(r.covCount)],['बाकी',String(r.dueCount)]];
+  sums.forEach((s,i)=>{const y=150+i*44;if(i%2===0){ctx.fillStyle='#faf6f1';ctx.fillRect(30,y,W-60,44);}ctx.fillStyle='#2a1712';ctx.fillText(s[0],40,y+28);ctx.fillText(s[1],600,y+28);});
+  let y=150+sums.length*44+20;
+  ctx.fillStyle='#9e2019';ctx.font='700 21px Mukta, sans-serif';ctx.fillText('इस माह जमा करने वाले',40,y+28);y+=44;
+  ctx.font='19px Mukta, sans-serif';ctx.fillStyle='#2a1712';
+  if(r.paid.length){r.paid.forEach(p=>{ctx.fillText(fitText(ctx,p.name,600),40,y+28);ctx.fillText(rs(p.amt),700,y+28);y+=rowH;});}
+  else{ctx.fillText('इस माह अभी कोई जमा नहीं।',40,y+28);y+=rowH;}
+  ctx.font='15px Mukta, sans-serif';ctx.fillStyle='#7a645a';ctx.textAlign='center';ctx.fillText('All rights reserved - Nexora - Digital & IT Agency',W/2,H-18);ctx.textAlign='left';
+  downloadCanvas(cv,`Durga-Shakti-Monthly-Report-${r.month}.png`);
+}
+function downloadCSV(filename,rows){
+  const q=v=>`"${String(v??'').replace(/"/g,'""')}"`;
+  const csv='\uFEFF'+rows.map(r=>r.map(q).join(',')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+}
+function downloadCollectionExcel(){
+  const d=collectionData();
+  const rows=[['दुर्गा शक्ति फाउंडेशन','सदस्य कलेक्शन सूची',d.M?mL(d.M):'सभी महीने'],[],['क्र.','सदस्य','मोबाइल','जमा','कवर तक','स्थिति'],...d.rows.map(r=>[r.m.sr,r.m.name,r.m.phone||'',r.amt,r.upto||'',r.status]),[],['कुल कलेक्शन',d.total],['सदस्य',d.totalMembers],['जमा करने वाले',d.paid],['बाकी',d.totalMembers-d.paid],[],['All rights reserved - Nexora - Digital & IT Agency']];
+  downloadCSV(`Durga-Shakti-Collection-${d.M||'all'}.csv`,rows);
+}
+function downloadReportExcel(){
+  const r=curRep||buildReport($('#rMonth').value||CUR,$('#rDue').checked);const M=r.month;
+  const rows=[['दुर्गा शक्ति फाउंडेशन',mL(M)+' — मासिक रिपोर्ट'],[],['पिछला शेष',r.open],['इस माह जमा',r.in],['सहायता खर्च',r.out],['खाते में शेष',r.close],[],['क्र.','सदस्य','स्थिति','इस माह जमा'],...sorted().map(m=>{const s=monthStatus(m.id,M);return [m.sr,m.name,s.l,s.recv]}),[],['कुल सदस्य',r.total],['इस माह जमा करने वाले',r.paid.length],['एडवांस से कवर',r.covCount],['बाकी',r.dueCount],[],['All rights reserved - Nexora - Digital & IT Agency']];
+  downloadCSV(`Durga-Shakti-Monthly-Report-${M}.csv`,rows);
+}
+$('#cPng').onclick=async()=>{await document.fonts.ready;drawCollectionPNG();toast('PNG डाउनलोड हो गया')};
+$('#cCsv').onclick=()=>{downloadCollectionExcel();toast('Excel डाउनलोड हो गया')};
+$('#rPng').onclick=async()=>{await document.fonts.ready;drawReportPNG();toast('PNG डाउनलोड हो गया')};
+$('#rXls').onclick=()=>{downloadReportExcel();toast('Excel डाउनलोड हो गया')};
 
 /* ============ BACKUP ============ */
 async function copy(t,msg){try{await navigator.clipboard.writeText(t);toast(msg||'कॉपी हो गया')}catch(e){$('#bkText').value=t;show('backup');$('#bkText').select();toast('टेक्स्ट चुना है, कॉपी करें')}}
@@ -708,7 +835,7 @@ $('#bkCsv').onclick=()=>{const q=v=>`"${String(v??'').replace(/"/g,'""')}"`;
   copy(['Sr,Member,Received Month,Amount,Covers From,Covers To,Mode,Note',...db.payments.map(p=>{const m=mem(p.mid)||{};return [m.sr,m.name,p.month,p.amt,p.from,p.to,p.mode,p.note].map(q).join(',')})].join('\n'))};
 $('#bkRestore').onclick=async()=>{let d;try{d=JSON.parse($('#bkText').value)}catch(e){return toast('डेटा सही नहीं है, पूरा टेक्स्ट पेस्ट करें')}
   if(!Array.isArray(d.members)||!Array.isArray(d.payments))return toast('डेटा सही नहीं है');
-  const items=[...d.members.map(o=>['members',o]),...d.payments.map(o=>['payments',o]),...(d.help||[]).map(o=>['help',o])];
+  const items=[...d.members.map(o=>['members',{...o,name:stripShri(o.name)}]),...d.payments.map(o=>['payments',o]),...(d.help||[]).map(o=>['help',o])];
   try{await Store.putMany(items);if(d.opening!=null)await Store.setOpening(Number(d.opening));$('#bkText').value='';toast(`${d.members.length} सदस्य, ${d.payments.length} जमा इम्पोर्ट हुए`)}catch(e){err(e)}};
 
 
