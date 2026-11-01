@@ -221,7 +221,7 @@ tr.total td{font-weight:700;background:var(--bg)}
     <div id="pubCollWrap" hidden>
       <div class="panel">
         <div class="ph"><h2>सभी सदस्य व कलेक्शन सूची</h2>
-          <div class="tools"><select id="pubCMonth" style="width:auto"></select><span class="note" id="pubCLocked" style="padding:0" hidden></span></div>
+          <div class="tools"><select id="pubCMonth" style="width:auto"></select></div>
         </div>
         <div class="stats" id="pubCStats" style="padding:16px"></div>
         <div class="tbl"><table>
@@ -229,7 +229,6 @@ tr.total td{font-weight:700;background:var(--bg)}
           <tbody id="pubCRows"></tbody>
         </table></div>
         <div class="ph" style="border-top:1px solid var(--line)"><div id="pubCTotals" style="font-weight:700"></div></div>
-        <p class="note" style="padding-top:0">महीना चुनें तो सिर्फ उस महीने का जमा दिखेगा, “सभी महीने” चुनें तो अब तक का कुल जमा दिखेगा।</p>
       </div>
     </div>
     <div style="text-align:center"><a class="publink" style="color:var(--kumkum)" href="#">एडमिन लॉगिन</a></div>
@@ -326,9 +325,16 @@ tr.total td{font-weight:700;background:var(--bg)}
     <div class="ph"><h2>सभी सदस्य व कलेक्शन सूची</h2>
       <div class="tools"><select id="cMonth" style="width:auto"></select><input id="cSearch" placeholder="नाम या क्रमांक खोजें" style="width:180px"></div>
     </div>
-    <div class="tools" style="padding:0 16px;gap:8px;flex-wrap:wrap">
-      <button class="btn" id="cPublish">Public में यही महीना दिखाएँ</button>
-      <span class="note" id="cPubStatus" style="padding:0">Public में अभी: सभी महीने</span>
+    <div style="padding:0 16px 12px">
+      <div style="font-weight:700;margin-bottom:8px">Public में दिखाने वाले महीने चुनें</div>
+      <div id="cPubMonths" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+      <div class="tools" style="gap:8px;margin-top:10px;flex-wrap:wrap">
+        <button class="btn" id="cPubSave">Public में चुने हुए महीने दिखाएँ</button>
+        <button class="btn ghost" id="cPubAll">सब चुनें</button>
+        <button class="btn ghost" id="cPubClear">सब हटाएँ</button>
+      </div>
+      <p class="note" id="cPubStatus" style="padding:4px 0 0">Public में अभी: सभी महीने</p>
+      <p class="note" style="padding:0">कोई महीना न चुनें और सेव करें तो Public में सभी महीने दिखेंगे।</p>
     </div>
     <div class="stats" id="cStats" style="padding:16px"></div>
     <div class="tbl"><table>
@@ -340,7 +346,6 @@ tr.total td{font-weight:700;background:var(--bg)}
       <button class="btn" id="cPng">PNG डाउनलोड करें</button>
       <button class="btn ghost" id="cCsv">Excel डाउनलोड करें</button>
     </div>
-    <p class="note" style="padding-top:0">महीना चुनें तो सिर्फ उस महीने का जमा दिखेगा, “सभी महीने” चुनें तो अब तक का कुल जमा दिखेगा। नीचे कुल कलेक्शन भी दिया है।</p>
   </div>
 </section>
 
@@ -485,12 +490,13 @@ if(FIRE){
       const got=new Set();
       const done=k=>{got.add(k);if(got.size>=4){$('#syncDot').classList.remove('off')}render()};
       ['members','payments','help'].forEach(c=>unsubs.push(fs.collection(c).onSnapshot(s=>{db[c]=s.docs.map(d=>d.data());done(c)},err)));
-      unsubs.push(fs.doc('settings/main').onSnapshot(d=>{if(d.exists){db.opening=d.data().opening??53251;db.publicCollectionMonth=d.data().publicCollectionMonth||'';}done('settings')},err));
+      unsubs.push(fs.doc('settings/main').onSnapshot(d=>{if(d.exists){db.opening=d.data().opening??53251;db.publicCollectionMonths=d.data().publicCollectionMonths||[];}done('settings')},err));
     },
     put(c,o){return fs.collection(c).doc(o.id).set(o).catch(err)},
     del(c,id){return fs.collection(c).doc(id).delete().catch(err)},
     setOpening(v){return fs.doc('settings/main').set({opening:v},{merge:true}).catch(err)},
     setPublicCollectionMonth(m){return fs.doc('settings/main').set({publicCollectionMonth:m},{merge:true}).catch(err)},
+    setPublicCollectionMonths(arr){return fs.doc('settings/main').set({publicCollectionMonths:arr,publicCollectionMonth:''},{merge:true}).catch(err)},
     async putMany(items){for(let i=0;i<items.length;i+=400){const b=fs.batch();items.slice(i,i+400).forEach(([c,o])=>b.set(fs.collection(c).doc(o.id),o));await b.commit()}},
     publish(month,data){return fs.doc('public/report').set({reports:{[month]:data},latest:month,updated:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})},
     async getPublic(){const d=await fs.doc('public/report').get();return d.exists?d.data():null}
@@ -511,6 +517,7 @@ if(FIRE){
     del(c,id){db[c]=db[c].filter(x=>x.id!==id);this.save();render()},
     setOpening(v){db.opening=v;this.save();render()},
     setPublicCollectionMonth(m){db.publicCollectionMonth=m;this.save();render()},
+    setPublicCollectionMonths(arr){db.publicCollectionMonths=arr;db.publicCollectionMonth='';this.save();render()},
     async putMany(items){items.forEach(([c,o])=>{const i=db[c].findIndex(x=>x.id===o.id);if(i>=0)db[c][i]=o;else db[c].push(o)});this.save();render()},
     async publish(month,data){const p=ls.get(KEY+'_pub')||{reports:{}};p.reports[month]=data;p.latest=month;ls.set(KEY+'_pub',p)},
     async getPublic(){return ls.get(KEY+'_pub')}
@@ -738,7 +745,7 @@ async function loadPublic(){
 }
 
 /* ============ PUBLIC COLLECTION (v9, Hindi only, read-only) ============ */
-let pubMembers=[],pubPayments=[],pubCollLoaded=false,pubLockedMonth='';
+let pubMembers=[],pubPayments=[],pubCollLoaded=false,pubAllowMonths=[];
 function pubMonthStatus(mid,M){
   const ps=pubPayments.filter(p=>p.mid===mid);
   const recv=ps.filter(p=>p.month===M).reduce((s,p)=>s+Number(p.amt),0);
@@ -749,24 +756,19 @@ function pubMonthStatus(mid,M){
 }
 function renderPubColl(){
   if(!$('#pubCMonth'))return;
-  if(pubLockedMonth){
-    $('#pubCMonth').hidden=true;
-    $('#pubCLocked').hidden=false;
-    $('#pubCLocked').textContent=`सिर्फ ${mL(pubLockedMonth)} का डेटा दिखाया जा रहा है`;
-  }else{
-    $('#pubCMonth').hidden=false;
-    $('#pubCLocked').hidden=true;
-  }
   const months=new Set([CUR]);range(START,CUR).forEach(k=>months.add(k));pubPayments.forEach(p=>months.add(p.month));
-  const opts=['',...[...months].sort().reverse()];
+  const allowed=pubAllowMonths.length?pubAllowMonths.slice().sort().reverse():[...months].sort().reverse();
+  const allLabel=pubAllowMonths.length?'चुने हुए सभी महीने':'सभी महीने';
+  const opts=['',...allowed];
   const cur=$('#pubCMonth').value;
-  $('#pubCMonth').innerHTML=opts.map(k=>`<option value="${k}">${k?mL(k):'सभी महीने'}</option>`).join('');
+  $('#pubCMonth').innerHTML=opts.map(k=>`<option value="${k}">${k?mL(k):allLabel}</option>`).join('');
   if(opts.includes(cur))$('#pubCMonth').value=cur;else $('#pubCMonth').value='';
-  const M=pubLockedMonth||$('#pubCMonth').value||'';
+  const M=$('#pubCMonth').value||'';
   const rows=pubMembers.slice().sort((a,b)=>a.sr-b.sr).map(m=>{
     const ps=pubPayments.filter(p=>p.mid===m.id);
     let amt,upto,status;
     if(M){const s=pubMonthStatus(m.id,M);amt=s.recv;status=s.l;upto=ps.map(p=>p.to).sort().pop();}
+    else if(pubAllowMonths.length){const aps=ps.filter(p=>pubAllowMonths.includes(p.month));amt=aps.reduce((s,p)=>s+Number(p.amt),0);upto=aps.map(p=>p.to).sort().pop();status=amt>0?'जमा':'बाकी';}
     else{amt=ps.reduce((s,p)=>s+Number(p.amt),0);upto=ps.map(p=>p.to).sort().pop();status=amt>0?'जमा':'बाकी';}
     return {m,amt,upto,status};
   });
@@ -774,11 +776,11 @@ function renderPubColl(){
   const paid=rows.filter(r=>r.amt>0).length;
   $('#pubCStats').innerHTML=`<div class="stat hl"><div class="k">कुल कलेक्शन</div><div class="v">${rs(total)}</div></div><div class="stat"><div class="k">सदस्य</div><div class="v">${rows.length}</div></div><div class="stat"><div class="k">जमा करने वाले</div><div class="v">${paid}</div></div><div class="stat"><div class="k">बाकी</div><div class="v">${rows.length-paid}</div></div>`;
   $('#pubCRows').innerHTML=rows.map(r=>`<tr><td class="sr">${r.m.sr}</td><td class="name">${esc(r.m.name)}</td><td class="n">${r.amt?rs(r.amt):'—'}</td><td>${r.upto?mS(r.upto):'—'}</td><td><span class="pill ${r.amt>0?'paid':'due'}">${r.status}</span></td></tr>`).join('')||`<tr><td colspan="5" class="empty">कोई सदस्य नहीं मिला।</td></tr>`;
-  $('#pubCTotals').textContent=`कुल कलेक्शन: ${rs(total)}  ·  सदस्य: ${rows.length}  ·  जमा करने वाले: ${paid}  ·  बाकी: ${rows.length-paid}  ·  महीना: ${M?mL(M):'सभी महीने'}`;
+  $('#pubCTotals').textContent=`कुल कलेक्शन: ${rs(total)}  ·  सदस्य: ${rows.length}  ·  जमा करने वाले: ${paid}  ·  बाकी: ${rows.length-paid}  ·  महीना: ${M?mL(M):(pubAllowMonths.length?'चुने हुए सभी महीने':'सभी महीने')}`;
 }
 async function loadPubColl(){
   if(pubCollLoaded){
-    try{const st=await Store.fs.doc('settings/main').get();pubLockedMonth=st.exists?(st.data().publicCollectionMonth||''):'';}catch(e){}
+    try{const st=await Store.fs.doc('settings/main').get();pubAllowMonths=st.exists?(st.data().publicCollectionMonths||[]):[];}catch(e){}
     renderPubColl();return;
   }
   $('#pubCRows').innerHTML='<tr><td colspan="5" class="empty">कलेक्शन लोड हो रहा है…</td></tr>';
@@ -787,7 +789,7 @@ async function loadPubColl(){
     const ms=await Store.fs.collection('members').get();
     const ps=await Store.fs.collection('payments').get();
     const st=await Store.fs.doc('settings/main').get();
-    pubLockedMonth=st.exists?(st.data().publicCollectionMonth||''):''; 
+    pubAllowMonths=st.exists?(st.data().publicCollectionMonths||[]):[];
     pubMembers=ms.docs.map(d=>d.data());pubPayments=ps.docs.map(d=>d.data());pubCollLoaded=true;
     renderPubColl();
   }catch(e){$('#pubCRows').innerHTML='<tr><td colspan="5" class="empty">कलेक्शन नहीं खुला। इंटरनेट जाँचें।</td></tr>';}
@@ -839,10 +841,32 @@ function renderCollection(){
   $('#cStats').innerHTML=`<div class="stat hl"><div class="k">कुल कलेक्शन</div><div class="v">${rs(d.total)}</div></div><div class="stat"><div class="k">सदस्य</div><div class="v">${d.totalMembers}</div></div><div class="stat"><div class="k">जमा करने वाले</div><div class="v">${d.paid}</div></div><div class="stat"><div class="k">बाकी</div><div class="v">${d.totalMembers-d.paid}</div></div>`;
   $('#cRows').innerHTML=d.rows.map(r=>`<tr><td class="sr">${r.m.sr}</td><td class="name">${esc(r.m.name)}</td><td>${esc(r.m.phone||'')}</td><td class="n">${r.amt?rs(r.amt):'—'}</td><td>${r.upto?mS(r.upto):'—'}</td><td><span class="pill ${r.amt>0?'paid':'due'}">${r.status}</span></td></tr>`).join('')||`<tr><td colspan="6" class="empty">कोई सदस्य नहीं मिला।</td></tr>`;
   $('#cTotals').textContent=`कुल कलेक्शन: ${rs(d.total)}  ·  सदस्य: ${d.totalMembers}  ·  जमा करने वाले: ${d.paid}  ·  बाकी: ${d.totalMembers-d.paid}  ·  महीना: ${d.M?mL(d.M):'सभी महीने'}`;
-  if($('#cPubStatus'))$('#cPubStatus').textContent=`Public में अभी: ${db.publicCollectionMonth?mL(db.publicCollectionMonth):'सभी महीने'}`;
+  if($('#cPubStatus')){
+    const allow=db.publicCollectionMonths||[];
+    $('#cPubStatus').textContent=allow.length?`Public में अभी: ${allow.slice().sort().reverse().map(mL).join(', ')}`:'Public में अभी: सभी महीने';
+  }
+  renderPubMonthCheckboxes();
+}
+function renderPubMonthCheckboxes(){
+  const box=$('#cPubMonths');if(!box)return;
+  const months=new Set([CUR]);range(START,CUR).forEach(k=>months.add(k));db.payments.forEach(p=>months.add(p.month));
+  const opts=[...months].sort().reverse();
+  const key=opts.join(',');
+  if(box.dataset.key===key)return;
+  box.dataset.key=key;
+  const allow=db.publicCollectionMonths||[];
+  const checked=m=>allow.length?allow.includes(m):true;
+  box.innerHTML=opts.map(k=>`<label style="display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:6px 10px"><input type="checkbox" value="${k}" ${checked(k)?'checked':''}> ${mL(k)}</label>`).join('');
 }
 $('#cMonth').onchange=renderCollection;$('#cSearch').addEventListener('input',renderCollection);
-$('#cPublish').onclick=async()=>{const M=$('#cMonth').value||'';try{await Store.setPublicCollectionMonth(M);db.publicCollectionMonth=M;toast(M?`Public में अब सिर्फ ${mL(M)} दिखेगा`:'Public में अब सभी महीने दिखेंगे');renderCollection();}catch(e){err(e);}};
+$('#cPubSave').onclick=async()=>{
+  const all=[...document.querySelectorAll('#cPubMonths input:checked')].map(i=>i.value);
+  const total=document.querySelectorAll('#cPubMonths input').length;
+  const save=(all.length===0||all.length===total)?[]:all.slice().sort();
+  try{await Store.setPublicCollectionMonths(save);db.publicCollectionMonths=save;const b=$('#cPubMonths');if(b)b.dataset.key='';toast(save.length?`Public में अब सिर्फ ${save.slice().sort().reverse().map(mL).join(', ')} दिखेगा`:'Public में अब सभी महीने दिखेंगे');renderCollection();}catch(e){err(e);}
+};
+$('#cPubAll').onclick=()=>{document.querySelectorAll('#cPubMonths input').forEach(i=>i.checked=true);};
+$('#cPubClear').onclick=()=>{document.querySelectorAll('#cPubMonths input').forEach(i=>i.checked=false);};
 function downloadCanvas(cv,filename){cv.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),3000)},'image/png')}
 function fitText(ctx,t,maxW){let s=t;while(s&&ctx.measureText(s).width>maxW){s=s.slice(0,-1)}if(s!==t)s=s.slice(0,-1)+'…';return s}
 function drawCollectionPNG(){
