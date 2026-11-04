@@ -1121,10 +1121,13 @@ async function renderPubAcc(){
   const B=$('#pubAccBody');B.innerHTML='<div class="empty">हिसाब लोड हो रहा है…</div>';
   const s=await loadPubSnap();
   if(!s){B.innerHTML='<div class="empty">पूरा हिसाब अभी उपलब्ध नहीं है। एडमिन के एक बार लॉगिन करते ही यहाँ दिखेगा।</div>';return}
-  const acc=accountsOf(s,s.start||START);const last=acc[acc.length-1];
+  const accAll=accountsOf(s,s.start||START);
+  const allowPub=(s.allow||[]).slice().sort();
+  const acc=allowPub.length?accAll.filter(x=>allowPub.includes(x.k)):accAll;
+  const last=acc[acc.length-1];
   const tin=acc.reduce((a,x)=>a+x.in,0),tout=acc.reduce((a,x)=>a+x.out,0);
-  const help=(s.help||[]).filter(h=>h.date.slice(0,7)>=(s.start||START)).sort((a,b)=>b.date.localeCompare(a.date));
-  B.innerHTML=`<div class="stats"><div class="stat hl"><div class="k">खाते में शेष</div><div class="v">${rs(last?last.close:s.opening)}</div></div><div class="stat"><div class="k">${mS(s.start||START)} से कुल जमा</div><div class="v">${rs(tin)}</div></div><div class="stat"><div class="k">कुल सहायता</div><div class="v">${rs(tout)}</div></div><div class="stat"><div class="k">शुरुआती शेष</div><div class="v">${rs(s.opening)}</div></div></div>
+  const help=(s.help||[]).filter(h=>allowPub.length?allowPub.includes(h.date.slice(0,7)):h.date.slice(0,7)>=(s.start||START)).sort((a,b)=>b.date.localeCompare(a.date));
+  B.innerHTML=`<div class="stats"><div class="stat hl"><div class="k">खाते में शेष</div><div class="v">${rs(last?last.close:s.opening)}</div></div><div class="stat"><div class="k">${allowPub.length?(allowPub.length===1?mL(allowPub[0])+' में कुल जमा':'चुने हुए महीनों में कुल जमा'):mS(s.start||START)+' से कुल जमा'}</div><div class="v">${rs(tin)}</div></div><div class="stat"><div class="k">कुल सहायता</div><div class="v">${rs(tout)}</div></div><div class="stat"><div class="k">शुरुआती शेष</div><div class="v">${rs(acc.length?acc[0].open:s.opening)}</div></div></div>
   <div class="panel" style="margin-top:16px"><div class="ph"><h2>महीनेवार हिसाब</h2></div><div class="tbl"><table><thead><tr><th>महीना</th><th class="n">पिछला शेष</th><th class="n">जमा</th><th class="n">सहायता</th><th class="n">शेष</th></tr></thead><tbody>
   ${acc.slice().reverse().map(x=>`<tr><td>${mL(x.k)}${(s.closed||[]).includes(x.k)?' <span class="pill paid">🔒 फाइनल</span>':''}</td><td class="n">${rs(x.open)}</td><td class="n" style="color:var(--ok)">${rs(x.in)}</td><td class="n" style="color:var(--kumkum)">${x.out?rs(x.out):'—'}</td><td class="n" style="font-weight:700">${rs(x.close)}</td></tr>`).join('')}</tbody></table></div></div>
   <div class="panel" style="margin-top:16px"><div class="ph"><h2>सहायता खर्च</h2></div><div class="tbl"><table><thead><tr><th>तारीख</th><th>विवरण</th><th class="n">राशि</th></tr></thead><tbody>
