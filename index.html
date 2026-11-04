@@ -73,7 +73,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .mode{font-size:.72rem;background:rgba(242,172,60,.15);color:var(--gold);padding:4px 10px;border-radius:99px;align-self:center}
 
 /* APP */
-header.top{background:var(--deep2);color:#fff;position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+header.top{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='%23f2ac3c' stroke-opacity='.10'%3E%3Ccircle cx='28' cy='28' r='10'/%3E%3Cpath d='M28 8v40M8 28h40'/%3E%3C/g%3E%3C/svg%3E"),linear-gradient(120deg,var(--deep),var(--deep2) 55%,#b8341f);color:#fff;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;box-shadow:0 6px 20px rgba(125,23,18,.25)}
 header.top .credit{background:var(--deep);color:#fff;padding-block:3px}
 header.top .wrap.h{padding-block:10px 0;display:flex;flex-direction:column;gap:8px}
 .brand{display:flex;align-items:center;gap:12px}
@@ -87,7 +87,8 @@ header.top .wrap.h{padding-block:10px 0;display:flex;flex-direction:column;gap:8
 .sync.off{background:#f2ac3c}
 nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
 nav button{background:none;border:0;color:#fff;opacity:.72;font:600 .92rem var(--f-body);padding:8px 11px;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
-nav button[aria-selected="true"]{opacity:1;border-color:#f2ac3c}
+nav button[aria-selected="true"]{opacity:1;border-color:#f2ac3c;color:#ffe3ad}
+nav button:hover{opacity:1}
 main .wrap{padding-block:20px 48px;display:flex;flex-direction:column;gap:16px}
 section{display:flex;flex-direction:column;gap:16px}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
@@ -118,7 +119,7 @@ td.sr{color:var(--muted);font-family:var(--f-num);font-size:.8rem;width:1%}
 .name small{display:block;font-weight:400;color:var(--muted);font-size:.8rem}
 .pill{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.78rem;font-weight:600}
 .pill.paid{background:var(--ok-soft);color:var(--ok)}
-.pill.cov{background:var(--cov-soft);color:var(--cov)}
+.pill.cov{background:var(--ok-soft);color:var(--ok);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ok) 35%,transparent)}
 .pill.due{background:var(--kumkum-soft);color:var(--kumkum)}
 .pill.flag{background:var(--warn-soft);color:var(--warn)}
 form.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;padding:16px}
@@ -140,7 +141,7 @@ input[type=checkbox]{width:auto}
 .mo{border-radius:8px;padding:7px 4px;text-align:center;font-size:.75rem;border:1px solid var(--line)}
 .mo b{display:block;font-family:var(--f-num);font-size:.78rem;font-weight:500}
 .mo.paid{background:var(--ok-soft);color:var(--ok);border-color:transparent}
-.mo.cov{background:var(--cov-soft);color:var(--cov);border-color:transparent}
+.mo.cov{background:var(--ok-soft);color:var(--ok);border:1px dashed color-mix(in srgb,var(--ok) 45%,transparent)}
 .mo.due{color:var(--muted)}
 .note{font-size:.85rem;color:var(--muted);padding:12px 16px 0;max-width:65ch}
 textarea{min-height:110px;font-family:var(--f-num);font-size:.8rem}
@@ -165,11 +166,103 @@ tr.total td{font-weight:700;background:var(--bg)}
 .rep-counts{display:flex;gap:8px;flex-wrap:wrap}
 .rep-names{font-size:.85rem;color:var(--muted);line-height:1.7}
 .rep-foot{padding:10px 20px;font-size:.72rem;color:var(--muted);text-align:center;background:var(--bg)}
+.rep-grid4{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:5px 10px;font-size:.88rem}
+.rep-grid4 .n{font-family:var(--f-num);text-align:right;font-variant-numeric:tabular-nums}
+.rep-grid4 .hd{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.rep-badge{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:99px;background:var(--gold);color:#3a0c08;font-size:.72rem;font-weight:700}
+.due-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:.92rem}
+.due-row:last-child{border-bottom:0}
+.due-row .btn{white-space:nowrap;flex:none}
+.due-row small{display:block;color:var(--muted);font-size:.75rem}
+.pchip{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);background:var(--bg);border-radius:99px;padding:4px 4px 4px 12px;font-size:.82rem;font-weight:600}
+.pchip button{border:0;background:var(--kumkum-soft);color:var(--kumkum);width:24px;height:24px;border-radius:50%;cursor:pointer;font-weight:700}
+.subpanel{padding:14px 16px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.subpanel h3{margin:0;font-size:.95rem}
+.edit-on{outline:2px solid var(--marigold);outline-offset:-2px}
+tr.det td{background:var(--bg);white-space:normal}
+tr.det .months{padding:6px 0}
+tr.clk{cursor:pointer}
+.ptabs{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+@media print{
+  body{background:#fff}
+  body *{visibility:hidden}
+  #repPreview,#repPreview *{visibility:visible}
+  #repPreview{position:absolute;left:0;top:0;width:100%}
+  #repPreview .rep{max-width:none;border:0}
+  .noexp{display:none!important}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
 .linkbox{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:0 16px 16px}
 .linkbox code{font-family:var(--f-num);font-size:.8rem;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;word-break:break-all;flex:1;min-width:0;user-select:all}
 .pub{min-height:100vh;display:flex;flex-direction:column;gap:16px;padding-block:20px 40px}
 .pub .credit{color:var(--muted)}
 .setup{max-width:560px;margin:40px auto;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;line-height:1.7}
+
+/* ===== v13 polish ===== */
+.mark{background:radial-gradient(circle at 50% 40%,#f7c25e,#d9800a);box-shadow:0 0 0 3px rgba(242,172,60,.25)}
+.flame{transform-origin:12px 11px;animation:flick 1.8s ease-in-out infinite}
+@keyframes flick{0%,100%{transform:scale(1) rotate(0)}30%{transform:scale(1.06,.95) rotate(-3deg)}60%{transform:scale(.96,1.05) rotate(2deg)}}
+.stat{position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.stat:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(42,23,18,.08)}
+.stat::before{content:"";position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,var(--marigold),var(--kumkum))}
+.stat.hl{background:linear-gradient(135deg,var(--deep),var(--deep2));}
+.stat.hl::before{background:var(--gold)}
+.panel{box-shadow:0 1px 0 rgba(42,23,18,.03),0 10px 30px -18px rgba(42,23,18,.18)}
+.btn{transition:transform .15s,filter .15s}.btn:hover{filter:brightness(1.07)}.btn:active{transform:scale(.97)}
+tbody tr{transition:background .15s}tbody tr:hover td{background:color-mix(in srgb,var(--marigold-soft) 55%,transparent)}
+
+/* HOME GRID + WALL (जमा करने वालों की दीवार) */
+.homegrid{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:16px;align-items:start}
+.homegrid>.wallcol{position:sticky;top:150px}
+@media (max-width:899px){.homegrid{grid-template-columns:minmax(0,1fr)}.homegrid>.wallcol{position:static;order:-1}}
+.wall{position:relative;border-radius:16px;overflow:hidden;color:#fff;
+  background:radial-gradient(80% 60% at 100% 0%,rgba(242,172,60,.30),transparent 60%),linear-gradient(160deg,#5e100c,var(--deep2) 60%,#b8341f);
+  box-shadow:0 18px 40px -20px rgba(125,23,18,.6)}
+.wall-h{position:relative;display:flex;align-items:center;gap:12px;padding:14px 16px 12px;border-bottom:1px solid rgba(242,172,60,.25)}
+.wall-h h3{margin:0;font-family:var(--f-display);font-weight:400;font-size:1.15rem;line-height:1.2}
+.wall-h p{margin:0;font-size:.78rem;color:var(--gold)}
+.ring{width:54px;height:54px;flex:none;position:relative}
+.ring svg{width:54px;height:54px;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:5}
+.ring .bg{stroke:rgba(255,255,255,.15)}
+.ring .fg{stroke:var(--gold);stroke-linecap:round;stroke-dasharray:138.2;animation:ringIn 1.4s cubic-bezier(.2,.8,.2,1) both}
+@keyframes ringIn{from{stroke-dashoffset:138.2}}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font:600 .78rem var(--f-num)}
+.wall-view{max-height:460px;overflow:hidden;position:relative;-webkit-mask-image:linear-gradient(transparent,#000 18px,#000 calc(100% - 26px),transparent);mask-image:linear-gradient(transparent,#000 18px,#000 calc(100% - 26px),transparent)}
+.wall-track{display:flex;flex-direction:column}
+.wall-track.run{animation:wallY calc(var(--n)*2.6s) linear infinite}
+.wall:hover .wall-track.run,.wall:focus-within .wall-track.run{animation-play-state:paused}
+@keyframes wallY{to{transform:translateY(-50%)}}
+.wl{display:flex;flex-direction:column;gap:8px;padding:12px 12px 8px}
+.wc{position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:12px;background:rgba(255,246,230,.08);border:1px solid rgba(242,172,60,.22)}
+.wl.first .wc{animation:wcIn .7s cubic-bezier(.2,.9,.25,1.2) both;animation-delay:calc(var(--i)*70ms)}
+@keyframes wcIn{from{opacity:0;transform:translateX(30px) scale(.92)}}
+.wc::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,226,160,.22) 50%,transparent 60%);transform:translateX(-120%);animation:shine 5s ease-in-out infinite;animation-delay:calc(var(--i)*.35s)}
+@keyframes shine{0%,60%{transform:translateX(-120%)}85%,100%{transform:translateX(120%)}}
+.wc-av{width:34px;height:34px;flex:none;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-size:1rem;background:radial-gradient(circle at 40% 35%,#f7c25e,#d9800a);color:#3a0c08}
+.wc.paid .wc-av{animation:glow 2.4s ease-in-out infinite}
+.wc.cov .wc-av{background:radial-gradient(circle at 40% 35%,#9be3b3,#2f7d4a);color:#fff}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(242,172,60,.55)}50%{box-shadow:0 0 0 6px rgba(242,172,60,0)}}
+.wc-n{min-width:0;flex:1;font-weight:600;font-size:.9rem;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wc-n small{display:block;font-weight:400;font-size:.72rem;color:rgba(255,246,230,.7)}
+.wc-a{font:600 .85rem var(--f-num);color:#ffe3ad;flex:none}
+.wc.cov .wc-a{color:#9be3b3;font-size:1.05rem}
+.wall-empty{padding:22px 16px;text-align:center;font-size:.88rem;color:rgba(255,246,230,.75)}
+.wall-f{display:flex;justify-content:space-between;gap:8px;padding:9px 14px;font-size:.74rem;color:rgba(255,246,230,.75);border-top:1px solid rgba(242,172,60,.2);background:rgba(0,0,0,.12)}
+/* horizontal wall (mobile + public) */
+.wall.horiz .wall-view{max-height:none;-webkit-mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 22px),transparent);mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 22px),transparent)}
+.wall.horiz .wall-view:not(:has(.run)){overflow-x:auto;scrollbar-width:none}
+.wall.horiz .wall-track{flex-direction:row;width:max-content}
+.wall.horiz .wall-track.run{animation-name:wallX;animation-duration:calc(var(--n)*3.2s)}
+@keyframes wallX{to{transform:translateX(-50%)}}
+.wall.horiz .wl{flex-direction:row;padding:12px 10px 12px 12px}
+.wall.horiz .wc{width:210px}
+.wall.horiz .wl.first .wc{animation-name:wcUp}
+@keyframes wcUp{from{opacity:0;transform:translateY(16px) scale(.92)}}
+.petal{position:absolute;top:10px;width:9px;height:12px;border-radius:60% 0 60% 0;pointer-events:none;z-index:3;animation:fall 2s cubic-bezier(.3,.6,.4,1) forwards}
+@keyframes fall{from{opacity:1;transform:translate(0,-10px) rotate(0)}to{opacity:0;transform:translate(var(--dx),150px) rotate(var(--r))}}
+.pubwall{max-width:640px;width:100%;margin:0 auto}
+@media (prefers-reduced-motion:reduce){.wl[aria-hidden="true"]{display:none}.wall-view{overflow:auto}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -179,6 +272,7 @@ tr.total td{font-weight:700;background:var(--bg)}
 <div id="loginView" class="login" hidden>
   <div class="credit">Made by <b>Manohar Singh</b> (imanohar7773)</div>
   <div class="lcard">
+    <div class="emblem"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="flame" d="M12 1.5c2.2 3 3.2 4.7 3.2 6.8A3.2 3.2 0 0112 11.6a3.2 3.2 0 01-3.2-3.3c0-2.1 1-3.8 3.2-6.8z" fill="#fff6e6"/><path d="M2.5 13h19c0 4.2-4.3 7.2-9.5 7.2S2.5 17.2 2.5 13z" fill="#7d1712"/><path d="M8.5 20.2h7l-1 2h-5z" fill="#7d1712"/></svg></div>
     <h1>दुर्गा शक्ति फाउंडेशन</h1>
     <div class="tag">सहयोग राशि प्रबंधन</div>
     <form class="lform" id="loginForm" autocomplete="on">
@@ -210,18 +304,20 @@ tr.total td{font-weight:700;background:var(--bg)}
 <div id="pubView" hidden>
   <div class="wrap pub">
     <div class="credit">Made by <b>Manohar Singh</b> (imanohar7773)</div>
-    <div class="tools" style="justify-content:center;gap:8px">
-      <button class="btn" id="pubTabReport">मासिक रिपोर्ट</button>
-      <button class="btn ghost" id="pubTabColl">कलेक्शन सूची</button>
+    <div class="ptabs">
+      <button class="btn" id="pubTabReport" data-pt="Report">रिपोर्ट</button>
+      <button class="btn ghost" id="pubTabColl" data-pt="Coll">कलेक्शन सूची</button>
+      <button class="btn ghost" id="pubTabAcc" data-pt="Acc">पूरा हिसाब</button>
     </div>
-    <div id="pubReportWrap">
+    <div id="pubReportWrap" style="display:flex;flex-direction:column;gap:16px">
       <div class="tools" style="justify-content:center"><select id="pubMonth" style="width:auto"></select></div>
+      <div class="pubwall" id="pubWall"></div>
       <div id="pubBody"></div>
     </div>
     <div id="pubCollWrap" hidden>
       <div class="panel">
         <div class="ph"><h2>सभी सदस्य व कलेक्शन सूची</h2>
-          <div class="tools"><select id="pubCMonth" style="width:auto"></select></div>
+          <div class="tools"><select id="pubCMonth" style="width:auto"></select><input id="pubCSearch" placeholder="अपना नाम खोजें" style="width:170px"></div>
         </div>
         <div class="stats" id="pubCStats" style="padding:16px"></div>
         <div class="tbl"><table>
@@ -229,8 +325,10 @@ tr.total td{font-weight:700;background:var(--bg)}
           <tbody id="pubCRows"></tbody>
         </table></div>
         <div class="ph" style="border-top:1px solid var(--line)"><div id="pubCTotals" style="font-weight:700"></div></div>
+        <p class="note" style="padding:0 16px 14px">किसी भी नाम पर टैप करें — उसका महीनेवार खाता खुलेगा।</p>
       </div>
     </div>
+    <div id="pubAccWrap" hidden><div id="pubAccBody"></div></div>
     <div style="text-align:center"><a class="publink" style="color:var(--kumkum)" href="#">एडमिन लॉगिन</a></div>
     <div class="credit" style="margin-top:12px">All rights reserved - Nexora - Digital &amp; IT Agency</div>
   </div>
@@ -242,13 +340,14 @@ tr.total td{font-weight:700;background:var(--bg)}
   <div class="credit">Made by <b>Manohar Singh</b> (imanohar7773)</div>
   <div class="wrap h">
     <div class="brand">
+      <div class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="flame" d="M12 1.5c2.2 3 3.2 4.7 3.2 6.8A3.2 3.2 0 0112 11.6a3.2 3.2 0 01-3.2-3.3c0-2.1 1-3.8 3.2-6.8z" fill="#fff6e6"/><path d="M2.5 13h19c0 4.2-4.3 7.2-9.5 7.2S2.5 17.2 2.5 13z" fill="#7d1712"/><path d="M8.5 20.2h7l-1 2h-5z" fill="#7d1712"/></svg></div>
       <div><h1>दुर्गा शक्ति फाउंडेशन</h1><div class="sub">सदस्य सहयोग राशि रजिस्टर</div></div>
       <div class="who"><span class="sync" id="syncDot" title="लाइव सिंक"></span><button id="logout">लॉगआउट</button></div>
     </div>
     <nav role="tablist">
       <button role="tab" data-tab="month" aria-selected="true">मासिक रजिस्टर</button>
       <button role="tab" data-tab="pay">राशि जमा करें</button>
-      <button role="tab" data-tab="report">मासिक रिपोर्ट</button>
+      <button role="tab" data-tab="report">रिपोर्ट</button>
       <button role="tab" data-tab="help">सहायता खर्च</button>
       <button role="tab" data-tab="account">हिसाब</button>
       <button role="tab" data-tab="ledger">सदस्य खाता</button>
@@ -263,6 +362,7 @@ tr.total td{font-weight:700;background:var(--bg)}
 
 <section data-view="month">
   <div class="stats" id="stats"></div>
+  <div class="homegrid">
   <div class="panel">
     <div class="ph">
       <h2 id="monthTitle"></h2>
@@ -273,14 +373,17 @@ tr.total td{font-weight:700;background:var(--bg)}
       <thead><tr><th>क्र.</th><th>सदस्य</th><th>स्थिति</th><th class="n">इस माह जमा</th><th></th></tr></thead>
       <tbody id="monthRows"></tbody>
     </table></div>
-    <div class="legend"><span style="--c:var(--ok)">इस महीने जमा किया</span><span style="--c:var(--cov)">पहले की एडवांस राशि से कवर (√)</span><span style="--c:var(--kumkum)">बाकी</span></div>
+    <div class="legend"><span style="--c:var(--ok)">इस महीने जमा किया (राशि दिखेगी)</span><span style="--c:#7fc79a">✓ पहले जमा की एडवांस राशि से कवर</span><span style="--c:var(--kumkum)">बाकी</span></div>
+  </div>
+  <div class="wallcol" id="wallBox"></div>
   </div>
 </section>
 
 <section data-view="pay" hidden>
   <div class="panel">
-    <div class="ph"><h2>राशि जमा करें</h2></div>
+    <div class="ph"><h2 id="payTitle">राशि जमा करें</h2></div>
     <form class="grid" id="payForm">
+      <input type="hidden" id="pId">
       <label class="span2">सदस्य (नाम या क्रमांक लिखें)<input id="pMember" list="memList" required autocomplete="off"></label>
       <label>राशि (₹)<input type="number" id="pAmt" min="0" required inputmode="numeric"></label>
       <label>जमा तारीख<input type="date" id="pDate" required></label>
@@ -288,12 +391,12 @@ tr.total td{font-weight:700;background:var(--bg)}
       <label>किस महीने तक<input type="month" id="pTo" required></label>
       <label>माध्यम<select id="pMode"><option>UPI</option><option>Cash</option><option>Bank</option><option>Cheque</option></select></label>
       <label>नोट / UTR<input id="pNote" maxlength="120"></label>
-      <div class="actions span2"><button class="btn" type="submit">जमा सेव करें</button><span class="hint">एक साथ कई महीनों की राशि हो तो "तक" वाला महीना बदलें।</span></div>
+      <div class="actions span2"><button class="btn" type="submit" id="pSave">जमा सेव करें</button><button class="btn ghost" type="button" id="pCancel" hidden>रद्द करें</button><span class="hint">एक साथ कई महीनों की राशि हो तो "तक" वाला महीना बदलें।</span></div>
     </form>
     <datalist id="memList"></datalist>
   </div>
   <div class="panel">
-    <div class="ph"><h2>सभी जमा</h2><input id="pSearch" placeholder="नाम खोजें" style="width:180px"></div>
+    <div class="ph"><h2>सभी जमा</h2><div class="tools"><input type="month" id="pMonthF" style="width:auto" title="महीना फ़िल्टर"><input id="pSearch" placeholder="नाम खोजें" style="width:180px"></div></div>
     <div class="tbl"><table>
       <thead><tr><th>जमा माह</th><th>सदस्य</th><th class="n">राशि</th><th>कवर महीने</th><th>माध्यम</th><th>नोट</th><th></th></tr></thead>
       <tbody id="payRows"></tbody>
@@ -303,9 +406,14 @@ tr.total td{font-weight:700;background:var(--bg)}
 
 <section data-view="report" hidden>
   <div class="panel">
-    <div class="ph"><h2>मासिक रिपोर्ट</h2>
-      <div class="tools"><input type="month" id="rMonth" style="width:auto">
-      <label style="flex-direction:row;align-items:center;gap:6px;color:var(--ink)"><input type="checkbox" id="rDue">बाकी सदस्यों के नाम दिखाएँ</label></div>
+    <div class="ph"><h2>रिपोर्ट</h2>
+      <div class="tools">
+        <select id="rType" style="width:auto"><option value="month">मासिक रिपोर्ट</option><option value="range">अवधि / सालाना रिपोर्ट</option><option value="due">बाकी सदस्य + रिमाइंडर</option></select>
+        <input type="month" id="rMonth" style="width:auto">
+        <span id="rRange" class="tools" hidden>से <input type="month" id="rFrom" style="width:auto"> तक <input type="month" id="rTo" style="width:auto">
+          <button type="button" class="chip" data-rq="all">शुरू से अब तक</button><button type="button" class="chip" data-rq="fy">वित्त वर्ष</button><button type="button" class="chip" data-rq="3">पिछले 3 माह</button></span>
+        <label id="rDueLbl" style="flex-direction:row;align-items:center;gap:6px;color:var(--ink)"><input type="checkbox" id="rDue">बाकी सदस्यों के नाम दिखाएँ</label>
+      </div>
     </div>
     <div style="padding:16px"><div id="repPreview"></div></div>
     <div class="actions" style="padding:0 16px 16px">
@@ -314,6 +422,16 @@ tr.total td{font-weight:700;background:var(--bg)}
       <button class="btn ghost" id="rPublish">ग्रुप लिंक पर पब्लिश करें</button>
       <button class="btn ghost" id="rPng">PNG डाउनलोड करें</button>
       <button class="btn ghost" id="rXls">Excel डाउनलोड करें</button>
+      <button class="btn ghost" id="rPrint">प्रिंट / PDF</button>
+    </div>
+    <div class="subpanel">
+      <h3>पब्लिक लिंक पर दिख रही रिपोर्ट</h3>
+      <div id="pubList" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+      <div class="actions">
+        <button class="btn sm" id="pubRefresh">सब रिपोर्ट अभी अपडेट करें</button>
+        <label style="flex-direction:row;align-items:center;gap:6px;color:var(--ink)"><input type="checkbox" id="autoPub">चालू महीने की रिपोर्ट अपने आप पब्लिश हो</label>
+      </div>
+      <p class="hint" style="margin:0">कोई भी जमा/सहायता/सदस्य बदलते ही पब्लिक लिंक का कलेक्शन, हिसाब और पब्लिश की गई सभी रिपोर्ट अपने आप अपडेट हो जाती हैं। × दबाकर कोई रिपोर्ट लिंक से हटा सकते हैं।</p>
     </div>
     <p class="note" style="padding-top:0">पब्लिश करने पर यह रिपोर्ट नीचे वाले लिंक पर सबको दिखेगी। लिंक एक बार ग्रुप में डाल दें, हर महीने पब्लिश करते ही नया हिसाब वहीं दिखेगा। वहाँ से कोई कुछ बदल नहीं सकता।</p>
     <div class="linkbox" style="padding-top:10px"><code id="pubLink"></code><button class="btn sm ghost" id="copyLink">लिंक कॉपी करें</button></div>
@@ -351,12 +469,13 @@ tr.total td{font-weight:700;background:var(--bg)}
 
 <section data-view="help" hidden>
   <div class="panel">
-    <div class="ph"><h2>सहायता / खर्च जोड़ें</h2></div>
+    <div class="ph"><h2 id="helpTitle">सहायता / खर्च जोड़ें</h2></div>
     <form class="grid" id="helpForm">
+      <input type="hidden" id="hId">
       <label>तारीख<input type="date" id="hDate" required></label>
       <label>राशि (₹)<input type="number" id="hAmt" min="1" required inputmode="numeric"></label>
       <label class="span2">सहायता का विवरण<input id="hDesc" required maxlength="200" placeholder="किसको, किस काम के लिए"></label>
-      <div class="actions span2"><button class="btn" type="submit">सहायता सेव करें</button></div>
+      <div class="actions span2"><button class="btn" type="submit" id="hSave">सहायता सेव करें</button><button class="btn ghost" type="button" id="hCancel" hidden>रद्द करें</button></div>
     </form>
   </div>
   <div class="panel">
@@ -370,11 +489,23 @@ tr.total td{font-weight:700;background:var(--bg)}
 
 <section data-view="account" hidden>
   <div class="panel">
-    <div class="ph"><h2>मासिक हिसाब</h2>
-      <label style="flex-direction:row;align-items:center;gap:8px">अगस्त 2026 से पहले खाते में ₹<input type="number" id="opening" style="width:110px"></label>
-    </div>
+    <div class="ph"><h2>हिसाब की शुरुआत व पुराना हिसाब बंद करें</h2></div>
+    <form class="grid" id="startForm">
+      <label>हिसाब किस महीने से शुरू<input type="month" id="sMonth" required></label>
+      <label><span id="openLbl">शुरुआत से पहले खाते में</span> (₹)<input type="number" id="opening" inputmode="numeric"></label>
+      <div class="actions span2">
+        <button class="btn" type="submit">शुरुआत सेव करें</button>
+        <button class="btn ghost" type="button" id="sAuto">पिछला शेष अपने आप भरें</button>
+        <button class="btn ghost" type="button" id="sLockOld">पिछले सभी महीने बंद करें</button>
+        <button class="btn danger" type="button" id="sPurge">शुरुआत से पहले की entries हटाएँ</button>
+      </div>
+    </form>
+    <p class="note" style="padding:0 16px 16px">जैसे नवंबर से शुरू करना है: महीना नवंबर 2026 चुनें → "पिछला शेष अपने आप भरें" दबाएँ (या खुद राशि लिखें) → सेव करें। उससे पहले के महीने हर जगह से छिप जाएँगे, डेटा सुरक्षित रहेगा। चाहें तो "entries हटाएँ" से पुराना डेटा हमेशा के लिए मिटा सकते हैं (जो एडवांस नए महीनों को कवर करता है वो नहीं मिटेगा)। 🔒 बंद महीने में कोई जमा/सहायता जोड़ी, बदली या हटाई नहीं जा सकती — जब तक आप उसे फिर से न खोलें।</p>
+  </div>
+  <div class="panel">
+    <div class="ph"><h2>मासिक हिसाब</h2></div>
     <div class="tbl"><table>
-      <thead><tr><th>महीना</th><th class="n">पिछला क्लोज़िंग</th><th class="n">इस माह जमा</th><th class="n">अब तक का टोटल</th><th class="n">सहायता</th><th class="n">शेष खाते में</th></tr></thead>
+      <thead><tr><th>महीना</th><th class="n">पिछला क्लोज़िंग</th><th class="n">इस माह जमा</th><th class="n">अब तक का टोटल</th><th class="n">सहायता</th><th class="n">शेष खाते में</th><th>फाइनल</th></tr></thead>
       <tbody id="accRows"></tbody>
     </table></div>
   </div>
@@ -386,6 +517,7 @@ tr.total td{font-weight:700;background:var(--bg)}
       <div class="tools"><input id="lMember" list="memList" placeholder="सदस्य चुनें" style="width:240px" autocomplete="off"><select id="lYear" style="width:auto"></select></div>
     </div>
     <div id="ledgerBody"></div>
+    <div class="actions" id="lActs" style="padding:0 16px 16px" hidden><a class="btn wa" id="lWa" target="_blank" rel="noopener">सदस्य को WhatsApp पर खाता भेजें</a><button class="btn ghost" id="lPng">खाता PNG डाउनलोड करें</button></div>
   </div>
 </section>
 
@@ -419,7 +551,7 @@ tr.total td{font-weight:700;background:var(--bg)}
         <button class="btn" id="bkCopy">बैकअप कॉपी करें</button>
         <button class="btn ghost" id="bkCsv">Excel के लिए CSV कॉपी करें</button>
         <button class="btn ghost" id="bkRestore">पेस्ट किया डेटा इम्पोर्ट करें</button>
-        
+        <button class="btn danger" id="bkWipe">सारा डेटा मिटाएँ</button>
       </div>
     </div>
   </div>
@@ -449,7 +581,7 @@ const FIREBASE_CONFIG = {
 };
 const ADMIN_EMAIL = "admin@durgashaktifoundation.in";   // Firebase Auth me yahi user banana hai
 const ALLOWED_USERS = ["mrmanvandrasingh","manvandrasingh","mrmanvendrasingh","manvendrasingh","manvendra","mrmanvendra"];
-const START='2026-08', IDLE_MIN=30, MAX_TRY=5, LOCK_MIN=5;
+let START='2026-08';const IDLE_MIN=30, MAX_TRY=5, LOCK_MIN=5;
 
 
 /* ============ HELPERS ============ */
@@ -473,7 +605,7 @@ async function sha(t){const b=await crypto.subtle.digest('SHA-256',new TextEncod
 const views=['loginView','setupView','pubView','appView'];
 const showView=v=>views.forEach(x=>$('#'+x).hidden=x!==v);
 
-let db={members:[],payments:[],help:[],opening:53251};
+let db={members:[],payments:[],help:[],opening:53251,closed:[],autoPublish:true};let dataReady=false;
 const FIRE = !!(FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.projectId && window.firebase);
 
 /* ============ STORE ============ */
@@ -488,9 +620,9 @@ if(FIRE){
     async logout(){unsubs.forEach(u=>u());unsubs=[];await auth.signOut()},
     watch(){
       const got=new Set();
-      const done=k=>{got.add(k);if(got.size>=4){$('#syncDot').classList.remove('off')}render()};
+      const done=k=>{got.add(k);if(got.size>=4){$('#syncDot').classList.remove('off');dataReady=true}render()};
       ['members','payments','help'].forEach(c=>unsubs.push(fs.collection(c).onSnapshot(s=>{db[c]=s.docs.map(d=>d.data());done(c)},err)));
-      unsubs.push(fs.doc('settings/main').onSnapshot(d=>{if(d.exists){db.opening=d.data().opening??53251;db.publicCollectionMonths=d.data().publicCollectionMonths||[];}done('settings')},err));
+      unsubs.push(fs.doc('settings/main').onSnapshot(d=>{if(d.exists){const x=d.data();db.opening=x.opening??53251;db.publicCollectionMonths=x.publicCollectionMonths||[];START=x.startMonth||'2026-08';db.closed=x.closed||[];db.autoPublish=x.autoPublish!==false;}done('settings')},err));
     },
     put(c,o){return fs.collection(c).doc(o.id).set(o).catch(err)},
     del(c,id){return fs.collection(c).doc(id).delete().catch(err)},
@@ -499,7 +631,13 @@ if(FIRE){
     setPublicCollectionMonths(arr){return fs.doc('settings/main').set({publicCollectionMonths:arr,publicCollectionMonth:''},{merge:true}).catch(err)},
     async putMany(items){for(let i=0;i<items.length;i+=400){const b=fs.batch();items.slice(i,i+400).forEach(([c,o])=>b.set(fs.collection(c).doc(o.id),o));await b.commit()}},
     publish(month,data){return fs.doc('public/report').set({reports:{[month]:data},latest:month,updated:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})},
-    async getPublic(){const d=await fs.doc('public/report').get();return d.exists?d.data():null}
+    async getPublic(){const d=await fs.doc('public/report').get();return d.exists?d.data():null},
+    setSettings(o){return fs.doc('settings/main').set(o,{merge:true}).catch(err)},
+    async delMany(items){for(let i=0;i<items.length;i+=400){const b=fs.batch();items.slice(i,i+400).forEach(([c,id])=>b.delete(fs.collection(c).doc(id)));await b.commit()}},
+    publishMany(map){return fs.doc('public/report').set({reports:map,updated:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})},
+    unpublish(k){return fs.doc('public/report').update(new firebase.firestore.FieldPath('reports',k),firebase.firestore.FieldValue.delete())},
+    setPublicData(o){return fs.doc('public/collection').set(o)},
+    async getPublicData(){const d=await fs.doc('public/collection').get();return d.exists?d.data():null}
   };
 }else{
   const KEY='dsf_fund_v3'; // Durga alag key — Purchase MIS ki ginger_* keys se alag
@@ -509,7 +647,8 @@ if(FIRE){
     watch(){
       let d=ls.get(KEY);
       
-      if(d)db=Object.assign({members:[],payments:[],help:[],opening:53251},d);
+      if(d)db=Object.assign({members:[],payments:[],help:[],opening:53251,closed:[],autoPublish:true},d);
+      START=db.startMonth||'2026-08';dataReady=true;
       render();
     },
     save(){ls.set(KEY,db)},
@@ -520,7 +659,13 @@ if(FIRE){
     setPublicCollectionMonths(arr){db.publicCollectionMonths=arr;db.publicCollectionMonth='';this.save();render()},
     async putMany(items){items.forEach(([c,o])=>{const i=db[c].findIndex(x=>x.id===o.id);if(i>=0)db[c][i]=o;else db[c].push(o)});this.save();render()},
     async publish(month,data){const p=ls.get(KEY+'_pub')||{reports:{}};p.reports[month]=data;p.latest=month;ls.set(KEY+'_pub',p)},
-    async getPublic(){return ls.get(KEY+'_pub')}
+    async getPublic(){return ls.get(KEY+'_pub')},
+    setSettings(o){if('startMonth' in o){db.startMonth=o.startMonth;START=o.startMonth}['closed','autoPublish','opening'].forEach(k=>{if(k in o)db[k]=o[k]});this.save();render()},
+    async delMany(items){items.forEach(([c,id])=>{db[c]=db[c].filter(x=>x.id!==id)});this.save();render()},
+    async publishMany(map){const p=ls.get(KEY+'_pub')||{reports:{}};Object.assign(p.reports,map);ls.set(KEY+'_pub',p)},
+    async unpublish(k){const p=ls.get(KEY+'_pub')||{reports:{}};delete p.reports[k];ls.set(KEY+'_pub',p)},
+    async setPublicData(o){ls.set(KEY+'_pubc',o)},
+    async getPublicData(){return ls.get(KEY+'_pubc')}
   };
 }
 function err(e){console.error(e);if(e&&e.code==='permission-denied')toast('अनुमति नहीं है। Firestore rules जाँचें।');else toast('सेव नहीं हुआ, इंटरनेट जाँचें');$('#syncDot')?.classList.add('off')}
@@ -562,10 +707,10 @@ $('#loginForm').onsubmit=async e=>{
 let idleT;
 function resetIdle(){clearTimeout(idleT);idleT=setTimeout(()=>{doLogout('निष्क्रिय होने से लॉगआउट हुआ')},IDLE_MIN*60000)}
 ['click','keydown','touchstart','scroll'].forEach(ev=>addEventListener(ev,()=>{if(!$('#appView').hidden)resetIdle()},{passive:true}));
-async function doLogout(msg){clearTimeout(idleT);try{sessionStorage.removeItem('dsf_sess');sessionStorage.removeItem('dsf_fb_fallback')}catch(e){}await Store.logout();db={members:[],payments:[],help:[],opening:53251};route();if(msg)toast(msg)}
+async function doLogout(msg){clearTimeout(idleT);try{sessionStorage.removeItem('dsf_sess');sessionStorage.removeItem('dsf_fb_fallback')}catch(e){}await Store.logout();db={members:[],payments:[],help:[],opening:53251,closed:[],autoPublish:true};dataReady=false;pubCache=null;lastHash='';route();if(msg)toast(msg)}
 $('#logout').onclick=()=>doLogout('लॉगआउट हो गया');
 let entered=false;
-function enterApp(){showView('appView');if(!entered){entered=true;Store.watch()}resetIdle();render();}
+function enterApp(){showView('appView');if(!entered){entered=true;Store.watch();refreshPubCache()}resetIdle();render();}
 
 function route(){
   if(location.hash==='#report'){showView('pubView');loadPublic();return}
@@ -582,23 +727,75 @@ const sorted=()=>db.members.slice().sort((a,b)=>a.sr-b.sr);
 const label=m=>`${m.sr} · ${m.name}`;
 const findMem=v=>{v=(v||'').trim();if(!v)return null;const sr=parseInt(v);if(!isNaN(sr)){const m=db.members.find(x=>x.sr===sr);if(m)return m}
   return db.members.find(m=>label(m)===v)||db.members.find(m=>m.name===v)||db.members.find(m=>stripShri(m.name)===stripShri(v))||null};
-function monthStatus(mid,M){
-  const ps=db.payments.filter(p=>p.mid===mid);
-  const recv=ps.filter(p=>p.month===M).reduce((s,p)=>s+Number(p.amt),0);
+/* v13: jis mahine me paisa aaya -> amount (green). Agle covered mahine -> ✓ green tick, "to" month tak. */
+function statusFrom(ps,M){
+  const here=ps.filter(p=>p.month===M);
+  const recv=here.reduce((s,p)=>s+Number(p.amt),0);
   const cov=ps.filter(p=>p.from<=M&&M<=p.to);
-  const flag=cov.length&&cov.every(p=>!Number(p.amt));
-  if(recv>0)return{c:'paid',l:'जमा',recv};
-  if(cov.length)return{c:flag?'flag':'cov',l:flag?'√ राशि दर्ज नहीं':'√ कवर',recv};
-  return{c:'due',l:'बाकी',recv};
+  if(recv>0){const ahead=here.map(p=>p.to).sort().pop();return{c:'paid',l:ahead>M?`जमा · ${mS(ahead)} तक`:'जमा',recv,upto:ahead}}
+  if(cov.length){const upto=cov.map(p=>p.to).sort().pop();const flag=cov.every(p=>!Number(p.amt));
+    return{c:flag?'flag':'cov',l:flag?'√ राशि दर्ज नहीं':`✓ ${mS(upto)} तक जमा`,recv:0,upto}}
+  return{c:'due',l:'बाकी',recv:0};
 }
-function accounts(){
-  const last=[CUR,...db.payments.map(p=>p.month),...db.help.map(h=>h.date.slice(0,7))].filter(k=>k>=START).sort().pop();
-  let open=Number(db.opening)||0;
-  return range(START,last).map(k=>{
-    const inn=db.payments.filter(p=>p.month===k).reduce((s,p)=>s+Number(p.amt),0);
-    const out=db.help.filter(h=>h.date.slice(0,7)===k).reduce((s,h)=>s+Number(h.amt),0);
+function monthStatus(mid,M){return statusFrom(db.payments.filter(p=>p.mid===mid),M)}
+const locked=k=>(db.closed||[]).includes(k);
+function guard(k){if(locked(k)){toast(`${mL(k)} बंद (🔒) है — "हिसाब" टैब से खोलें`);return false}return true}
+const keyLabel=k=>k.includes('_to_')?(([a,b])=>`${mS(a)} – ${mS(b)} · अवधि`)(k.split('_to_')):mL(k);
+function waLink(phone,text){let d=String(phone||'').replace(/\D/g,'');if(d.length===10)d='91'+d;return `https://wa.me/${d}?text=${encodeURIComponent(text)}`}
+const remindText=(name,M)=>`🙏 जय माँ दुर्गा\n${stripShri(name)} जी, दुर्गा शक्ति फाउंडेशन में ${mL(M)} की सहयोग राशि अभी बाकी है। कृपया सुविधा अनुसार जमा करें।\n\nपूरा हिसाब: ${PUB_URL}\nधन्यवाद 🙏`;
+function accounts(){return accountsOf(db,START)}
+function accountsOf(d,start){
+  const last=[CUR,...d.payments.map(p=>p.month),...d.help.map(h=>h.date.slice(0,7))].filter(k=>k>=start).sort().pop();
+  let open=Number(d.opening)||0;
+  return range(start,last).map(k=>{
+    const inn=d.payments.filter(p=>p.month===k).reduce((s,p)=>s+Number(p.amt),0);
+    const out=d.help.filter(h=>h.date.slice(0,7)===k).reduce((s,h)=>s+Number(h.amt),0);
     const r={k,open,in:inn,out,close:open+inn-out};open=r.close;return r});
 }
+
+
+/* ============ WALL — जमा करने वालों की दीवार (v13) ============ */
+const mqMob=matchMedia('(max-width:899px)');
+const wallState={};
+function wallItemsFrom(all,M,payments){
+  const lastDate=mid=>payments.filter(p=>p.mid===mid&&p.month===M).map(p=>p.date||'').sort().pop()||'';
+  const paid=all.filter(x=>x.s.c==='paid').map(x=>({name:x.m.name,kind:'paid',amt:x.s.recv,upto:x.s.upto,d:lastDate(x.m.id)})).sort((a,b)=>b.d.localeCompare(a.d)||b.amt-a.amt);
+  const cov=all.filter(x=>x.s.c==='cov'||x.s.c==='flag').map(x=>({name:x.m.name,kind:'cov',upto:x.s.upto}));
+  return paid.concat(cov);
+}
+function wallHTML(items,total,M,horiz){
+  const pct=total?Math.round(items.length/total*100):0, C=138.2;
+  const card=(it,i)=>`<div class="wc ${it.kind}" style="--i:${i}"><span class="wc-av">${esc(Array.from(stripShri(it.name))[0]||'•')}</span><span class="wc-n">${esc(it.name)}<small>${it.kind==='paid'?(it.upto&&it.upto>M?`इस माह जमा · ${mS(it.upto)} तक एडवांस`:'इस माह जमा'):`✓ ${mS(it.upto)} तक पहले से जमा`}</small></span><span class="wc-a">${it.kind==='paid'?rs(it.amt):'✓'}</span></div>`;
+  const run=items.length>(horiz?1:6);
+  const list=items.map(card).join('');
+  const body=items.length?`<div class="wall-track ${run?'run':''}" style="--n:${items.length}"><div class="wl first">${list}</div>${run?`<div class="wl" aria-hidden="true">${list}</div>`:''}</div>`
+    :`<div class="wall-empty">${mL(M)} में अभी किसी ने जमा नहीं किया।<br>पहला नाम यहाँ चमकेगा ✨</div>`;
+  const paidN=items.filter(i=>i.kind==='paid').length, covN=items.length-paidN;
+  return `<aside class="wall${horiz?' horiz':''}" aria-label="जमा करने वाले सदस्य">
+    <div class="wall-h"><div class="ring"><svg viewBox="0 0 54 54"><circle class="bg" cx="27" cy="27" r="22"/><circle class="fg" cx="27" cy="27" r="22" style="stroke-dashoffset:${(C*(1-pct/100)).toFixed(1)}"/></svg><b>${pct}%</b></div>
+    <div><h3>शक्ति स्तम्भ 🙏</h3><p>${mL(M)} · ${items.length} / ${total} सदस्यों का सहयोग</p></div></div>
+    <div class="wall-view">${body}</div>
+    <div class="wall-f"><span>💰 इस माह जमा: ${paidN}</span><span>✓ एडवांस: ${covN}</span></div>
+  </aside>`;
+}
+function petals(host){
+  const h=host.querySelector('.wall-h');if(!h||matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  const cs=['#f2ac3c','#e8930c','#ffcf6b','#ef6b5f','#fff6e6'];
+  for(let i=0;i<18;i++){const s=document.createElement('span');s.className='petal';
+    s.style.left=(5+Math.random()*90)+'%';s.style.background=cs[i%cs.length];
+    s.style.setProperty('--dx',(Math.random()*80-40)+'px');s.style.setProperty('--r',(Math.random()*540-270)+'deg');
+    s.style.animationDelay=(Math.random()*.35)+'s';h.appendChild(s);setTimeout(()=>s.remove(),2600)}
+}
+function drawWall(sel,items,total,M,horiz){
+  const host=$(sel);if(!host)return;
+  const key=JSON.stringify([M,horiz,total,items]);const st=wallState[sel]||{};
+  if(st.key===key)return;
+  host.innerHTML=wallHTML(items,total,M,horiz);
+  if(st.key&&st.M===M&&items.length>st.n)petals(host);
+  wallState[sel]={key,M,n:items.length};
+}
+function renderWall(M,all){drawWall('#wallBox',wallItemsFrom(all,M,db.payments),all.length,M,mqMob.matches)}
+mqMob.addEventListener?.('change',()=>render());
 
 let filter='all';
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>show(b.dataset.tab));
@@ -606,12 +803,15 @@ function show(t){document.querySelectorAll('nav button').forEach(b=>b.setAttribu
   document.querySelectorAll('[data-view]').forEach(v=>v.hidden=v.dataset.view!==t);render();scrollTo(0,0)}
 $('#monthPick').value=CUR;$('#monthPick').min=START;$('#rMonth').value=CUR;$('#rMonth').min=START;
 $('#pDate').value=TODAY;$('#pFrom').value=CUR;$('#pTo').value=CUR;$('#hDate').value=TODAY;
-['#monthPick','#mSearch1','#pSearch','#mSearch','#rMonth','#rDue'].forEach(s=>$(s).addEventListener('input',render));
+['#monthPick','#mSearch1','#pSearch','#pMonthF','#mSearch','#rMonth','#rDue','#rType','#rFrom','#rTo'].forEach(s=>$(s).addEventListener('input',render));
 const PUB_URL=location.origin+location.pathname+'#report';
 $('#pubLink').textContent=PUB_URL;
 
+let lastHash='';
 function render(){
   if($('#appView').hidden)return;
+  ['#monthPick','#rMonth','#rFrom','#rTo'].forEach(x=>$(x).min=START);
+  if(dataReady){const h=JSON.stringify([db.members,db.payments,db.help,db.opening,START,db.closed,db.publicCollectionMonths,db.autoPublish]);if(h!==lastHash){lastHash=h;scheduleAutoPub()}}
   const M=$('#monthPick').value||CUR;
   $('#memList').innerHTML=sorted().map(m=>`<option value="${esc(label(m))}">`).join('');
 
@@ -626,27 +826,37 @@ function render(){
     <div class="stat"><div class="k">इस माह जमा</div><div class="v">${rs(got)}</div></div>
     <div class="stat"><div class="k">इस माह सहायता</div><div class="v">${rs(helpM)}</div></div>
     <div class="stat"><div class="k">सदस्य स्थिति</div><div class="v">${cnt.paid+cnt.cov} / ${all.length}</div>
-      <div class="bar"><i style="width:${cnt.paid/N*100}%;background:var(--ok)"></i><i style="width:${cnt.cov/N*100}%;background:var(--cov)"></i></div></div>`;
-  $('#filterChips').innerHTML=[['all','सभी',all.length],['paid','जमा',cnt.paid],['cov','√ कवर',cnt.cov],['due','बाकी',cnt.due]]
+      <div class="bar"><i style="width:${cnt.paid/N*100}%;background:var(--ok)"></i><i style="width:${cnt.cov/N*100}%;background:var(--ok);opacity:.45"></i></div></div>`;
+  renderWall(M,all);
+  $('#filterChips').innerHTML=[['all','सभी',all.length],['paid','जमा',cnt.paid],['cov','✓ एडवांस',cnt.cov],['due','बाकी',cnt.due]]
     .map(([k,l,n])=>`<button class="chip" data-f="${k}" aria-pressed="${filter===k}">${l} · ${n}</button>`).join('');
   document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{filter=b.dataset.f;render()});
   const vis=all.filter(({m,s})=>(filter==='all'||(filter==='cov'?['cov','flag'].includes(s.c):s.c===filter))&&(!q1||m.name.includes(q1)||String(m.sr)===q1));
-  $('#monthRows').innerHTML=vis.map(({m,s})=>`<tr><td class="sr">${m.sr}</td><td class="name">${esc(m.name)}</td><td><span class="pill ${s.c}">${s.l}</span></td><td class="n">${s.recv?rs(s.recv):'—'}</td><td>${s.c==='due'?`<button class="btn sm ghost" data-quick="${m.id}">जमा करें</button>`:''}</td></tr>`).join('')
+  $('#monthRows').innerHTML=vis.map(({m,s})=>`<tr><td class="sr">${m.sr}</td><td class="name">${esc(m.name)}</td><td><span class="pill ${s.c}">${s.l}</span></td><td class="n">${s.recv?rs(s.recv):'—'}</td><td><div style="display:flex;gap:6px">${s.c==='due'?`<button class="btn sm ghost" data-quick="${m.id}">जमा करें</button>${m.phone?`<a class="btn sm wa" target="_blank" rel="noopener" href="${esc(waLink(m.phone,remindText(m.name,M)))}">याद दिलाएँ</a>`:''}`:''}</div></td></tr>`).join('')
     ||`<tr><td colspan="5" class="empty">${db.members.length?'इस फ़िल्टर में कोई सदस्य नहीं।':'अभी कोई सदस्य नहीं। "बैकअप" टैब से Excel डेटा इम्पोर्ट करें या "सदस्य" टैब से जोड़ें।'}</td></tr>`;
   document.querySelectorAll('[data-quick]').forEach(b=>b.onclick=()=>{const m=mem(b.dataset.quick);show('pay');$('#pMember').value=label(m);$('#pFrom').value=M;$('#pTo').value=M;$('#pAmt').focus()});
 
   const pq=$('#pSearch').value.trim();
-  const ps=db.payments.filter(p=>!pq||(mem(p.mid)?.name||'').includes(pq)).sort((a,b)=>b.month.localeCompare(a.month)||(mem(a.mid)?.sr||0)-(mem(b.mid)?.sr||0));
-  $('#payRows').innerHTML=ps.map(p=>`<tr><td>${mS(p.month)}</td><td class="name">${esc(mem(p.mid)?.name||'—')}</td><td class="n">${Number(p.amt)?rs(p.amt):'<span class="pill flag">दर्ज नहीं</span>'}</td><td>${p.from===p.to?mS(p.from):mS(p.from)+' – '+mS(p.to)}</td><td>${esc(p.mode)}</td><td>${esc(p.note)}</td><td><button class="btn sm danger" data-delpay="${p.id}">हटाएँ</button></td></tr>`).join('')||`<tr><td colspan="7" class="empty">कोई जमा नहीं मिला।</td></tr>`;
-  arm('[data-delpay]','delpay',id=>{Store.del('payments',id);toast('जमा हटाया')});
+  const pmf=$('#pMonthF').value;
+  const ps=db.payments.filter(p=>(!pq||(mem(p.mid)?.name||'').includes(pq))&&(!pmf||p.month===pmf)).sort((a,b)=>b.month.localeCompare(a.month)||(mem(a.mid)?.sr||0)-(mem(b.mid)?.sr||0));
+  $('#payRows').innerHTML=ps.map(p=>`<tr><td>${mS(p.month)}</td><td class="name">${esc(mem(p.mid)?.name||'—')}</td><td class="n">${Number(p.amt)?rs(p.amt):'<span class="pill flag">दर्ज नहीं</span>'}</td><td>${p.from===p.to?mS(p.from):mS(p.from)+' – '+mS(p.to)}</td><td>${esc(p.mode)}</td><td>${esc(p.note)}</td><td>${locked(p.month)?'<span class="pill paid">🔒 बंद</span>':`<div style="display:flex;gap:6px"><button class="btn sm ghost" data-editpay="${p.id}">बदलें</button><button class="btn sm danger" data-delpay="${p.id}">हटाएँ</button></div>`}</td></tr>`).join('')||`<tr><td colspan="7" class="empty">कोई जमा नहीं मिला।</td></tr>`;
+  arm('[data-delpay]','delpay',id=>{const p=db.payments.find(x=>x.id===id);if(p&&!guard(p.month))return;Store.del('payments',id);toast('जमा हटाया')});
+  document.querySelectorAll('[data-editpay]').forEach(b=>b.onclick=()=>{const p=db.payments.find(x=>x.id===b.dataset.editpay);if(!p)return;const m=mem(p.mid);
+    $('#pId').value=p.id;$('#pMember').value=m?label(m):'';$('#pAmt').value=p.amt;$('#pDate').value=p.date||p.month+'-01';$('#pFrom').value=p.from;$('#pTo').value=p.to;$('#pMode').value=p.mode||'UPI';$('#pNote').value=p.note||'';
+    $('#payTitle').textContent='जमा बदलें';$('#pSave').textContent='बदलाव सेव करें';$('#pCancel').hidden=false;$('#payForm').classList.add('edit-on');scrollTo(0,0);$('#pAmt').focus()});
 
   const hs=db.help.slice().sort((a,b)=>b.date.localeCompare(a.date));
-  $('#helpRows').innerHTML=hs.map((h,i)=>`<tr><td class="sr">${hs.length-i}</td><td>${h.date.split('-').reverse().join('-')}</td><td style="white-space:normal">${esc(h.desc)}</td><td class="n">${rs(h.amt)}</td><td><button class="btn sm danger" data-delhelp="${h.id}">हटाएँ</button></td></tr>`).join('')||`<tr><td colspan="5" class="empty">अभी कोई सहायता दर्ज नहीं। ऊपर फ़ॉर्म से पहली सहायता जोड़ें।</td></tr>`;
-  arm('[data-delhelp]','delhelp',id=>{Store.del('help',id);toast('सहायता हटाई')});
+  $('#helpRows').innerHTML=hs.map((h,i)=>`<tr><td class="sr">${hs.length-i}</td><td>${h.date.split('-').reverse().join('-')}</td><td style="white-space:normal">${esc(h.desc)}</td><td class="n">${rs(h.amt)}</td><td>${locked(h.date.slice(0,7))?'<span class="pill paid">🔒 बंद</span>':`<div style="display:flex;gap:6px"><button class="btn sm ghost" data-edithelp="${h.id}">बदलें</button><button class="btn sm danger" data-delhelp="${h.id}">हटाएँ</button></div>`}</td></tr>`).join('')||`<tr><td colspan="5" class="empty">अभी कोई सहायता दर्ज नहीं। ऊपर फ़ॉर्म से पहली सहायता जोड़ें।</td></tr>`;
+  arm('[data-delhelp]','delhelp',id=>{const h=db.help.find(x=>x.id===id);if(h&&!guard(h.date.slice(0,7)))return;Store.del('help',id);toast('सहायता हटाई')});
+  document.querySelectorAll('[data-edithelp]').forEach(b=>b.onclick=()=>{const h=db.help.find(x=>x.id===b.dataset.edithelp);if(!h)return;
+    $('#hId').value=h.id;$('#hDate').value=h.date;$('#hAmt').value=h.amt;$('#hDesc').value=h.desc;$('#helpTitle').textContent='सहायता बदलें';$('#hSave').textContent='बदलाव सेव करें';$('#hCancel').hidden=false;$('#helpForm').classList.add('edit-on');scrollTo(0,0);$('#hAmt').focus()});
 
-  if(document.activeElement!==$('#opening'))$('#opening').value=db.opening;
-  $('#accRows').innerHTML=acc.map(x=>`<tr><td>${mL(x.k)}</td><td class="n">${rs(x.open)}</td><td class="n">${rs(x.in)}</td><td class="n">${rs(x.open+x.in)}</td><td class="n">${x.out?rs(x.out):'—'}</td><td class="n" style="font-weight:700">${rs(x.close)}</td></tr>`).join('')
-    +`<tr class="total"><td>कुल</td><td></td><td class="n">${rs(acc.reduce((s,x)=>s+x.in,0))}</td><td></td><td class="n">${rs(acc.reduce((s,x)=>s+x.out,0))}</td><td class="n">${rs(acc.length?acc[acc.length-1].close:db.opening)}</td></tr>`;
+  if(!$('#opening').dataset.dirty&&document.activeElement!==$('#opening'))$('#opening').value=db.opening;
+  if(!$('#sMonth').dataset.dirty&&document.activeElement!==$('#sMonth'))$('#sMonth').value=START;
+  $('#openLbl').textContent=`${mL($('#sMonth').value||START)} से पहले खाते में`;
+  $('#accRows').innerHTML=acc.map(x=>`<tr><td>${mL(x.k)}</td><td class="n">${rs(x.open)}</td><td class="n">${rs(x.in)}</td><td class="n">${rs(x.open+x.in)}</td><td class="n">${x.out?rs(x.out):'—'}</td><td class="n" style="font-weight:700">${rs(x.close)}</td><td>${locked(x.k)?`<span class="pill paid">🔒 बंद</span> <button class="btn sm ghost" data-lock="${x.k}">खोलें</button>`:`<button class="btn sm ghost" data-lock="${x.k}">🔒 बंद करें</button>`}</td></tr>`).join('')
+    +`<tr class="total"><td>कुल</td><td></td><td class="n">${rs(acc.reduce((s,x)=>s+x.in,0))}</td><td></td><td class="n">${rs(acc.reduce((s,x)=>s+x.out,0))}</td><td class="n">${rs(acc.length?acc[acc.length-1].close:db.opening)}</td><td></td></tr>`;
+  document.querySelectorAll('[data-lock]').forEach(b=>b.onclick=()=>{const k=b.dataset.lock;const c=new Set(db.closed||[]);const was=c.has(k);was?c.delete(k):c.add(k);db.closed=[...c].sort();Store.setSettings({closed:db.closed});render();toast(was?`${mL(k)} फिर से खुला`:`${mL(k)} बंद (फाइनल) हुआ`)});
 
   const mq=$('#mSearch').value.trim();
   $('#memCount').textContent=`सभी सदस्य (${db.members.length})`;
@@ -655,7 +865,7 @@ function render(){
     return `<tr><td class="sr">${m.sr}</td><td class="name">${esc(m.name)}</td><td>${esc(m.phone||'')}</td><td class="n">${t?rs(t):'—'}</td><td>${upto?mS(upto):'<span class="pill due">कुछ नहीं</span>'}</td><td><div style="display:flex;gap:6px"><button class="btn sm ghost" data-viewl="${m.id}">खाता</button><button class="btn sm ghost" data-edit="${m.id}">बदलें</button><button class="btn sm danger" data-delmem="${m.id}">हटाएँ</button></div></td></tr>`}).join('')||`<tr><td colspan="6" class="empty">कोई सदस्य नहीं मिला।</td></tr>`;
   document.querySelectorAll('[data-viewl]').forEach(b=>b.onclick=()=>{$('#lMember').value=label(mem(b.dataset.viewl));show('ledger')});
   document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{const m=mem(b.dataset.edit);$('#mId').value=m.id;$('#mSr').value=m.sr;$('#mName').value=m.name;$('#mPhone').value=m.phone||'';$('#mFormTitle').textContent='सदस्य बदलें';$('#mSave').textContent='बदलाव सेव करें';$('#mCancel').hidden=false;scrollTo(0,0);$('#mName').focus()});
-  arm('[data-delmem]','delmem',id=>{db.payments.filter(p=>p.mid===id).forEach(p=>Store.del('payments',p.id));Store.del('members',id);toast('सदस्य हटाया')});
+  arm('[data-delmem]','delmem',id=>{if(db.payments.some(p=>p.mid===id&&locked(p.month)))return toast('इस सदस्य की जमा बंद (🔒) महीने में है — पहले वो महीना खोलें');db.payments.filter(p=>p.mid===id).forEach(p=>Store.del('payments',p.id));Store.del('members',id);toast('सदस्य हटाया')});
   if(!$('#mId').value&&document.activeElement!==$('#mSr'))$('#mSr').value=Math.max(0,...db.members.map(m=>m.sr))+1;
 
   renderLedger();renderReport();renderCollection();
@@ -668,7 +878,11 @@ function renderLedger(){
   const m=findMem($('#lMember').value);
   const ys=[...new Set(['2026','2027',CUR.slice(0,4),...db.payments.map(p=>p.to.slice(0,4))])].sort();
   const yv=$('#lYear').value||CUR.slice(0,4);$('#lYear').innerHTML=ys.map(y=>`<option>${y}</option>`).join('');$('#lYear').value=ys.includes(yv)?yv:ys[0];
+  $('#lActs').hidden=!m;
   if(!m){$('#ledgerBody').innerHTML='<div class="empty">ऊपर सदस्य का नाम या क्रमांक लिखें।</div>';return}
+  {const mp0=db.payments.filter(p=>p.mid===m.id);const tot0=mp0.reduce((s,p)=>s+Number(p.amt),0);const up0=mp0.map(p=>p.to).sort().pop();const dueN=range(START,CUR).filter(k=>monthStatus(m.id,k).c==='due');
+   const txt=`🙏 *दुर्गा शक्ति फाउंडेशन*\n*${stripShri(m.name)} जी का खाता*\n\nकुल जमा: ${rs(tot0)}\n${up0?`✅ ${mL(up0)} तक जमा`:'अभी कोई जमा नहीं'}\n${dueN.length?`⏳ बाकी महीने: ${dueN.map(mS).join(', ')}`:'🎉 कोई महीना बाकी नहीं'}\n\nपूरा हिसाब: ${PUB_URL}`;
+   $('#lWa').href=m.phone?waLink(m.phone,txt):'https://wa.me/?text='+encodeURIComponent(txt);}
   const Y=$('#lYear').value;
   const cells=MS.map((n,i)=>{const k=`${Y}-${pad(i+1)}`;
     if(k<START)return `<div class="mo" style="opacity:.35">${n}<b>—</b></div>`;
@@ -685,19 +899,63 @@ function renderLedger(){
     </tbody></table></div>`;
 }
 $('#lMember').addEventListener('input',renderLedger);$('#lYear').onchange=renderLedger;
+$('#lPng').onclick=async()=>{const el=$('#ledgerBody');if(!window.html2canvas)return toast('PNG अभी उपलब्ध नहीं, इंटरनेट जाँचें');await document.fonts.ready;
+  const m=findMem($('#lMember').value);const cv=await html2canvas(el,{scale:2,backgroundColor:getComputedStyle(document.body).backgroundColor||'#fff'});downloadCanvas(cv,`Durga-Shakti-Khata-${m?m.sr:''}.png`);toast('PNG डाउनलोड हो गया')};
 
 /* ============ REPORT ============ */
 function buildReport(M,withDue){
   const acc=accounts().find(x=>x.k===M)||{open:Number(db.opening)||0,in:0,out:0,close:Number(db.opening)||0};
   const paid=[],cov=[],due=[];
-  sorted().forEach(m=>{const s=monthStatus(m.id,M);const r={sr:m.sr,name:m.name,amt:s.recv};(s.c==='paid'?paid:s.c==='due'?due:cov).push(r)});
+  sorted().forEach(m=>{const s=monthStatus(m.id,M);const r={sr:m.sr,name:m.name,amt:s.recv,upto:s.upto||''};(s.c==='paid'?paid:s.c==='due'?due:cov).push(r)});
   const help=db.help.filter(h=>h.date.slice(0,7)===M).map(h=>({date:h.date,desc:h.desc,amt:Number(h.amt)}));
-  return {month:M,open:acc.open,in:acc.in,out:acc.out,close:acc.close,paid,covCount:cov.length,dueCount:due.length,due:withDue?due.map(d=>d.name):[],help,total:db.members.length,at:new Date().toISOString()};
+  return {type:'month',key:M,withDue:!!withDue,final:locked(M),month:M,open:acc.open,in:acc.in,out:acc.out,close:acc.close,paid,cov:cov.map(c=>({sr:c.sr,name:c.name,upto:c.upto})),covCount:cov.length,dueCount:due.length,due:withDue?due.map(d=>d.name):[],help,total:db.members.length,at:new Date().toISOString()};
+}
+const repFoot=`<div class="rep-foot">Made by Manohar Singh (imanohar7773)<br>All rights reserved - Nexora - Digital &amp; IT Agency</div>`;
+function buildRange(from,to,withDue){
+  if(to<from)[from,to]=[to,from];
+  const ks=range(from,to),acc=accounts();
+  const rows=ks.map(k=>acc.find(x=>x.k===k)||{k,open:0,in:0,out:0,close:0});
+  const mm=sorted().map(m=>{const ps=db.payments.filter(p=>p.mid===m.id);
+    return{sr:m.sr,name:m.name,amt:ps.filter(p=>p.month>=from&&p.month<=to).reduce((s,p)=>s+Number(p.amt),0),
+      dueM:ks.filter(k=>k<=CUR&&statusFrom(ps,k).c==='due').length,upto:ps.map(p=>p.to).sort().pop()||''}});
+  const help=db.help.filter(h=>{const k=h.date.slice(0,7);return k>=from&&k<=to}).sort((a,b)=>a.date.localeCompare(b.date)).map(h=>({date:h.date,desc:h.desc,amt:Number(h.amt)}));
+  return {type:'range',key:from+'_to_'+to,from,to,month:to,withDue:!!withDue,final:ks.every(locked),
+    open:rows[0].open,in:rows.reduce((s,r)=>s+r.in,0),out:rows.reduce((s,r)=>s+r.out,0),close:rows[rows.length-1].close,
+    months:rows.map(r=>({k:r.k,in:r.in,out:r.out,close:r.close})),members:mm,help,total:mm.length,at:new Date().toISOString()};
+}
+function buildDue(M){
+  const due=sorted().filter(m=>monthStatus(m.id,M).c==='due').map(m=>({sr:m.sr,name:m.name,phone:m.phone||'',last:db.payments.filter(p=>p.mid===m.id).map(p=>p.to).sort().pop()||''}));
+  return {type:'due',key:'due-'+M,month:M,due,total:db.members.length,dueCount:due.length};
+}
+function rangeHTML(r){
+  const paidN=r.members.filter(m=>m.amt>0).length;
+  return `<div class="rep">
+    <div class="rep-h"><div><h3>दुर्गा शक्ति फाउंडेशन</h3><p>${mL(r.from)} – ${mL(r.to)} · अवधि हिसाब${r.final?'<span class="rep-badge">🔒 फाइनल</span>':''}</p></div></div>
+    <div class="rep-sum">
+      <span>${mS(r.from)} से पहले शेष</span><span class="n">${rs(r.open)}</span>
+      <span>इस अवधि में कुल जमा</span><span class="n" style="color:var(--ok)">+ ${rs(r.in)}</span>
+      <span>इस अवधि में सहायता</span><span class="n" style="color:var(--kumkum)">− ${rs(r.out)}</span>
+      <span class="big">खाते में शेष</span><span class="n big">${rs(r.close)}</span>
+    </div>
+    <div class="rep-sec"><h4>महीनेवार हिसाब</h4><div class="rep-grid4"><span class="hd">महीना</span><span class="hd n">जमा</span><span class="hd n">सहायता</span><span class="hd n">शेष</span>
+      ${r.months.map(x=>`<span>${mS(x.k)}</span><span class="n" style="color:var(--ok)">${rs(x.in)}</span><span class="n" style="color:var(--kumkum)">${x.out?rs(x.out):'—'}</span><span class="n" style="font-weight:600">${rs(x.close)}</span>`).join('')}</div></div>
+    <div class="rep-sec"><h4>सदस्यवार जमा (${paidN} / ${r.total})</h4><div class="rep-list">${r.members.map(m=>`<span>${esc(m.name)}${m.upto&&m.upto>=r.to?` <small style="color:var(--ok)">✓ ${mS(m.upto)} तक</small>`:''}${r.withDue&&m.dueM?` <small style="color:var(--kumkum)">(${m.dueM} माह बाकी)</small>`:''}</span><span class="n" style="color:${m.amt?'var(--ok)':'var(--muted)'}">${m.amt?rs(m.amt):'—'}</span>`).join('')}</div></div>
+    ${r.help.length?`<div class="rep-sec"><h4>सहायता खर्च</h4><div class="rep-list">${r.help.map(h=>`<span>${h.date.split('-').reverse().join('-')} · ${esc(h.desc)}</span><span class="n">${rs(h.amt)}</span>`).join('')}</div></div>`:''}
+    ${repFoot}</div>`;
+}
+function dueHTML(r){
+  return `<div class="rep">
+    <div class="rep-h"><div><h3>दुर्गा शक्ति फाउंडेशन</h3><p>${mL(r.month)} · बाकी सदस्य सूची</p></div></div>
+    <div class="rep-sum"><span>कुल सदस्य</span><span class="n">${r.total}</span><span class="big">बाकी सदस्य</span><span class="n big" style="color:var(--kumkum)">${r.dueCount}</span></div>
+    <div class="rep-sec">${r.due.length?r.due.map((d,i)=>`<div class="due-row"><span><b>${i+1}. ${esc(d.name)}</b><small>${d.last?'आखिरी जमा '+mL(d.last)+' तक':'अभी तक कोई जमा नहीं'}${d.phone?' · '+esc(d.phone):''}</small></span>${d.phone?`<a class="btn sm wa noexp" target="_blank" rel="noopener" href="${esc(waLink(d.phone,remindText(d.name,r.month)))}">याद दिलाएँ</a>`:'<span class="hint noexp">नंबर नहीं</span>'}</div>`).join(''):'<div class="rep-names">🎉 इस महीने कोई बाकी नहीं — सबने सहयोग दिया!</div>'}</div>
+    ${repFoot}</div>`;
 }
 function reportHTML(r){
+  if(r&&r.type==='range')return rangeHTML(r);
+  if(r&&r.type==='due')return dueHTML(r);
   return `<div class="rep">
     <div class="rep-h">
-      <div><h3>दुर्गा शक्ति फाउंडेशन</h3><p>${mL(r.month)} · मासिक हिसाब</p></div></div>
+      <div><h3>दुर्गा शक्ति फाउंडेशन</h3><p>${mL(r.month)} · मासिक हिसाब${r.final?'<span class="rep-badge">🔒 फाइनल</span>':''}</p></div></div>
     <div class="rep-sum">
       <span>पिछला शेष</span><span class="n">${rs(r.open)}</span>
       <span>इस माह जमा</span><span class="n" style="color:var(--ok)">+ ${rs(r.in)}</span>
@@ -705,32 +963,83 @@ function reportHTML(r){
       <span class="big">खाते में शेष</span><span class="n big">${rs(r.close)}</span>
     </div>
     <div class="rep-sec"><h4>सदस्य स्थिति (कुल ${r.total})</h4><div class="rep-counts">
-      <span class="pill paid">इस माह जमा · ${r.paid.length}</span><span class="pill cov">एडवांस से कवर · ${r.covCount}</span><span class="pill due">बाकी · ${r.dueCount}</span></div></div>
-    <div class="rep-sec"><h4>इस माह जमा करने वाले</h4>${r.paid.length?`<div class="rep-list">${r.paid.map(p=>`<span>${esc(p.name)}</span><span class="n">${rs(p.amt)}</span>`).join('')}</div>`:'<div class="rep-names">इस माह अभी कोई जमा नहीं।</div>'}</div>
+      <span class="pill paid">इस माह जमा · ${r.paid.length}</span><span class="pill cov">✓ एडवांस से कवर · ${r.covCount}</span><span class="pill due">बाकी · ${r.dueCount}</span></div></div>
+    <div class="rep-sec"><h4>इस माह जमा करने वाले</h4>${r.paid.length?`<div class="rep-list">${r.paid.map(p=>`<span>${esc(p.name)}${p.upto&&p.upto>r.month?` <small style="color:var(--ok)">(${mS(p.upto)} तक एडवांस)</small>`:''}</span><span class="n" style="color:var(--ok)">${rs(p.amt)}</span>`).join('')}</div>`:'<div class="rep-names">इस माह अभी कोई जमा नहीं।</div>'}</div>
+    ${r.cov&&r.cov.length?`<div class="rep-sec"><h4>✓ पहले से जमा (एडवांस से कवर)</h4><div class="rep-list">${r.cov.map(c=>`<span>${esc(c.name)}</span><span class="n" style="color:var(--ok);font-weight:600">✓ ${c.upto?mS(c.upto)+' तक':''}</span>`).join('')}</div></div>`:''}
     ${r.help.length?`<div class="rep-sec"><h4>सहायता खर्च</h4><div class="rep-list">${r.help.map(h=>`<span>${esc(h.desc)}</span><span class="n">${rs(h.amt)}</span>`).join('')}</div></div>`:''}
     ${r.due&&r.due.length?`<div class="rep-sec"><h4>बाकी सदस्य</h4><div class="rep-names">${r.due.map(esc).join(' · ')}</div></div>`:''}
     <div class="rep-foot">Made by Manohar Singh (imanohar7773)<br>All rights reserved - Nexora - Digital &amp; IT Agency</div>
   </div>`;
 }
 function reportText(r){
+  if(r.type==='range'){
+    let t=`🙏 *दुर्गा शक्ति फाउंडेशन*\n*${mL(r.from)} – ${mL(r.to)} — अवधि हिसाब*\n\n${mS(r.from)} से पहले शेष: ${rs(r.open)}\nकुल जमा: ${rs(r.in)}\nसहायता: ${rs(r.out)}\n*खाते में शेष: ${rs(r.close)}*\n\n📅 *महीनेवार*\n`+r.months.map(x=>`${mS(x.k)}: जमा ${rs(x.in)}${x.out?' · सहायता '+rs(x.out):''} · शेष ${rs(x.close)}`).join('\n');
+    const pd=r.members.filter(m=>m.amt>0);t+=`\n\n✅ *सदस्यवार जमा (${pd.length})*\n`+(pd.length?pd.map((m,i)=>`${i+1}. ${m.name} — ${rs(m.amt)}`).join('\n'):'अभी कोई नहीं');
+    if(r.withDue){const du=r.members.filter(m=>m.dueM);if(du.length)t+=`\n\n⏳ *बाकी*\n`+du.map(m=>`${m.name} (${m.dueM} माह)`).join(', ');}
+    if(r.help.length)t+=`\n\n🤝 *सहायता*\n`+r.help.map((h,i)=>`${i+1}. ${h.desc} — ${rs(h.amt)}`).join('\n');
+    return t+`\n\nपूरा हिसाब: ${PUB_URL}\n\n_Made by Manohar Singh_`;
+  }
+  if(r.type==='due'){
+    return `🙏 *दुर्गा शक्ति फाउंडेशन*\n*${mL(r.month)} — बाकी सहयोग राशि*\n\n`+(r.due.length?r.due.map((d,i)=>`${i+1}. ${d.name}`).join('\n')+`\n\nकृपया सुविधा अनुसार जल्द जमा करें 🙏`:'🎉 इस महीने सबने सहयोग दिया, धन्यवाद!')+`\n\nपूरा हिसाब: ${PUB_URL}`;
+  }
   let t=`🙏 *दुर्गा शक्ति फाउंडेशन*\n*${mL(r.month)} — मासिक हिसाब*\n\n`;
   t+=`पिछला शेष: ${rs(r.open)}\nइस माह जमा: ${rs(r.in)}\nसहायता खर्च: ${rs(r.out)}\n*खाते में शेष: ${rs(r.close)}*\n\n`;
   t+=`✅ *इस माह जमा (${r.paid.length})*\n`+(r.paid.length?r.paid.map((p,i)=>`${i+1}. ${p.name} — ${rs(p.amt)}`).join('\n'):'अभी कोई नहीं')+'\n\n';
   if(r.help.length)t+=`🤝 *सहायता*\n`+r.help.map((h,i)=>`${i+1}. ${h.desc} — ${rs(h.amt)}`).join('\n')+'\n\n';
-  t+=`☑️ एडवांस से कवर: ${r.covCount} सदस्य\n⏳ बाकी: ${r.dueCount} सदस्य\n`;
+  if(r.cov&&r.cov.length)t+=`☑️ *पहले से जमा — एडवांस (${r.cov.length})*\n`+r.cov.map((c,i)=>`${i+1}. ${c.name} ✅ ${c.upto?mS(c.upto)+' तक':''}`).join('\n')+'\n\n';
+  else t+=`☑️ एडवांस से कवर: ${r.covCount} सदस्य\n`;
+  t+=`⏳ बाकी: ${r.dueCount} सदस्य\n`;
   if(r.due&&r.due.length)t+=r.due.join(', ')+'\n';
   t+=`\nपूरा हिसाब: ${PUB_URL}\n\n_Made by Manohar Singh_`;
   return t;
 }
 let curRep;
 function renderReport(){
-  const M=$('#rMonth').value||CUR;curRep=buildReport(M,$('#rDue').checked);
+  const T=$('#rType').value,M=$('#rMonth').value||CUR;
+  if(!$('#rFrom').value||$('#rFrom').value<START)$('#rFrom').value=START;if($('#rTo').value&&$('#rTo').value<START)$('#rTo').value=CUR;if(!$('#rTo').value)$('#rTo').value=CUR;
+  $('#rMonth').hidden=T==='range';$('#rRange').hidden=T!=='range';$('#rDueLbl').hidden=T==='due';$('#rPublish').hidden=T==='due';$('#rXls').hidden=false;
+  curRep=T==='range'?buildRange($('#rFrom').value,$('#rTo').value,$('#rDue').checked):T==='due'?buildDue(M):buildReport(M,$('#rDue').checked);
   $('#repPreview').innerHTML=reportHTML(curRep);
+  $('#autoPub').checked=db.autoPublish!==false;
+  renderPubList();
   $('#rWa').href='https://wa.me/?text='+encodeURIComponent(reportText(curRep));
 }
 $('#rCopy').onclick=()=>copy(reportText(curRep),'संदेश कॉपी हुआ, ग्रुप में पेस्ट करें');
 $('#copyLink').onclick=()=>copy(PUB_URL,'लिंक कॉपी हुआ');
-$('#rPublish').onclick=async()=>{try{await Store.publish(curRep.month,curRep);toast(mL(curRep.month)+' की रिपोर्ट पब्लिश हुई')}catch(e){err(e)}};
+$('#rPublish').onclick=async()=>{try{await Store.publish(curRep.key,curRep);if(pubCache){pubCache.reports=pubCache.reports||{};pubCache.reports[curRep.key]=curRep}renderPubList();toast(keyLabel(curRep.key)+' की रिपोर्ट पब्लिश हुई')}catch(e){err(e)}};
+$('#rPrint').onclick=()=>window.print();
+document.querySelectorAll('[data-rq]').forEach(b=>b.onclick=()=>{const q=b.dataset.rq;let f,t=CUR;
+  if(q==='all')f=START;else if(q==='3')f=addM(CUR,-2);else{const[y,m]=CUR.split('-').map(Number);f=m>=4?`${y}-04`:`${y-1}-04`;t=m>=4?`${y+1}-03`:`${y}-03`}
+  if(f<START)f=START;$('#rFrom').value=f;$('#rTo').value=t;render()});
+$('#autoPub').onchange=()=>{db.autoPublish=$('#autoPub').checked;Store.setSettings({autoPublish:db.autoPublish});toast(db.autoPublish?'चालू महीने की रिपोर्ट अपने आप पब्लिश होगी':'ऑटो पब्लिश बंद');scheduleAutoPub()};
+
+/* ============ PUBLIC LINK SYNC (v14) ============ */
+let pubCache=null,autoT;
+async function refreshPubCache(){try{pubCache=(await Store.getPublic())||{reports:{}};pubCache.reports=pubCache.reports||{}}catch(e){pubCache={reports:{}}}renderPubList()}
+function renderPubList(){const box=$('#pubList');if(!box)return;
+  if(!pubCache){box.innerHTML='<span class="hint">लोड हो रहा है…</span>';return}
+  const ks=Object.keys(pubCache.reports||{}).sort().reverse();
+  const key=ks.join('|');if(box.dataset.key===key&&box.childElementCount)return;box.dataset.key=key;
+  box.innerHTML=ks.length?ks.map(k=>`<span class="pchip">${keyLabel(k)}<button type="button" data-unpub="${k}" aria-label="लिंक से हटाएँ">×</button></span>`).join(''):'<span class="hint">अभी कोई रिपोर्ट पब्लिश नहीं हुई।</span>';
+  box.querySelectorAll('[data-unpub]').forEach(b=>b.onclick=async()=>{const k=b.dataset.unpub;if(!confirm(keyLabel(k)+' की रिपोर्ट पब्लिक लिंक से हटानी है?'))return;
+    try{await Store.unpublish(k);delete pubCache.reports[k];if(k===CUR&&db.autoPublish!==false){db.autoPublish=false;Store.setSettings({autoPublish:false})}box.dataset.key='';renderPubList();toast('रिपोर्ट लिंक से हटी')}catch(e){err(e)}});
+}
+function publicSnapshot(){return{members:sorted().map(m=>({id:m.id,sr:m.sr,name:m.name})),payments:db.payments.map(p=>({mid:p.mid,month:p.month,amt:Number(p.amt)||0,from:p.from,to:p.to})),
+  help:db.help.map(h=>({date:h.date,desc:h.desc,amt:Number(h.amt)||0})),opening:Number(db.opening)||0,start:START,closed:db.closed||[],allow:db.publicCollectionMonths||[],at:new Date().toISOString()}}
+function rebuildRep(k,old){if(k.includes('_to_')){const[a,b]=k.split('_to_');return buildRange(a,b,!!(old&&old.withDue))}return buildReport(k,!!(old&&(old.withDue||(old.due&&old.due.length))))}
+function scheduleAutoPub(){clearTimeout(autoT);autoT=setTimeout(autoPub,3500)}
+async function autoPub(manual){
+  if($('#appView').hidden||!dataReady)return;
+  try{
+    await Store.setPublicData(publicSnapshot());
+    if(!pubCache)await refreshPubCache();
+    const upd={};Object.keys(pubCache.reports).forEach(k=>upd[k]=rebuildRep(k,pubCache.reports[k]));
+    if(db.autoPublish!==false&&CUR>=START&&!upd[CUR])upd[CUR]=buildReport(CUR,false);
+    if(Object.keys(upd).length){await Store.publishMany(upd);Object.assign(pubCache.reports,upd);renderPubList()}
+    if(manual)toast('पब्लिक लिंक पूरा अपडेट हो गया');
+  }catch(e){console.warn('auto publish',e);if(manual)err(e)}
+}
+$('#pubRefresh').onclick=()=>autoPub(true);
 
 async function loadPublic(){
   $('#pubBody').innerHTML='<div class="empty">हिसाब लोड हो रहा है…</div>';
@@ -738,22 +1047,18 @@ async function loadPublic(){
     const p=await Store.getPublic();
     if(!p||!p.reports||!Object.keys(p.reports).length){$('#pubBody').innerHTML='<div class="empty">अभी कोई रिपोर्ट पब्लिश नहीं हुई है।</div>';$('#pubMonth').hidden=true;return}
     const ks=Object.keys(p.reports).sort().reverse();
-    $('#pubMonth').hidden=false;$('#pubMonth').innerHTML=ks.map(k=>`<option value="${k}">${mL(k)}</option>`).join('');
-    const draw=()=>$('#pubBody').innerHTML=reportHTML(p.reports[$('#pubMonth').value]);
+    $('#pubMonth').hidden=false;$('#pubMonth').innerHTML=ks.map(k=>`<option value="${k}">${keyLabel(k)}</option>`).join('');
+    const draw=()=>{const r=p.reports[$('#pubMonth').value];$('#pubBody').innerHTML=reportHTML(r);
+      if(r.type==='range'){$('#pubWall').innerHTML='';delete wallState['#pubWall'];return}
+      const items=(r.paid||[]).map(x=>({name:x.name,kind:'paid',amt:x.amt,upto:x.upto||''})).concat((r.cov||[]).map(x=>({name:x.name,kind:'cov',upto:x.upto})));
+      drawWall('#pubWall',items,r.total||items.length,r.month,true)};
     $('#pubMonth').onchange=draw;draw();
   }catch(e){$('#pubBody').innerHTML='<div class="empty">रिपोर्ट नहीं खुली। इंटरनेट जाँचें।</div>'}
 }
 
 /* ============ PUBLIC COLLECTION (v9, Hindi only, read-only) ============ */
 let pubMembers=[],pubPayments=[],pubCollLoaded=false,pubAllowMonths=[];
-function pubMonthStatus(mid,M){
-  const ps=pubPayments.filter(p=>p.mid===mid);
-  const recv=ps.filter(p=>p.month===M).reduce((s,p)=>s+Number(p.amt),0);
-  const cov=ps.filter(p=>p.from<=M&&M<=p.to);
-  if(recv>0)return{l:'जमा',recv};
-  if(cov.length)return{l:'√ कवर',recv:0};
-  return{l:'बाकी',recv:0};
-}
+function pubMonthStatus(mid,M){return statusFrom(pubPayments.filter(p=>p.mid===mid),M)}
 function renderPubColl(){
   if(!$('#pubCMonth'))return;
   const months=new Set([CUR]);range(START,CUR).forEach(k=>months.add(k));pubPayments.forEach(p=>months.add(p.month));
@@ -764,21 +1069,35 @@ function renderPubColl(){
   $('#pubCMonth').innerHTML=opts.map(k=>`<option value="${k}">${k?mL(k):allLabel}</option>`).join('');
   if(opts.includes(cur))$('#pubCMonth').value=cur;else $('#pubCMonth').value='';
   const M=$('#pubCMonth').value||'';
-  const rows=pubMembers.slice().sort((a,b)=>a.sr-b.sr).map(m=>{
+  const pq=($('#pubCSearch').value||'').trim();
+  const rows=pubMembers.slice().sort((a,b)=>a.sr-b.sr).filter(m=>!pq||m.name.includes(pq)||stripShri(m.name).includes(pq)||String(m.sr)===pq).map(m=>{
     const ps=pubPayments.filter(p=>p.mid===m.id);
-    let amt,upto,status;
-    if(M){const s=pubMonthStatus(m.id,M);amt=s.recv;status=s.l;upto=ps.map(p=>p.to).sort().pop();}
-    else if(pubAllowMonths.length){const aps=ps.filter(p=>pubAllowMonths.includes(p.month));amt=aps.reduce((s,p)=>s+Number(p.amt),0);upto=aps.map(p=>p.to).sort().pop();status=amt>0?'जमा':'बाकी';}
-    else{amt=ps.reduce((s,p)=>s+Number(p.amt),0);upto=ps.map(p=>p.to).sort().pop();status=amt>0?'जमा':'बाकी';}
-    return {m,amt,upto,status};
+    let amt,upto,status,c;
+    if(M){const s=pubMonthStatus(m.id,M);amt=s.recv;status=s.l;c=s.c==='flag'?'cov':s.c;upto=ps.map(p=>p.to).sort().pop();}
+    else if(pubAllowMonths.length){const aps=ps.filter(p=>pubAllowMonths.includes(p.month));amt=aps.reduce((s,p)=>s+Number(p.amt),0);upto=aps.map(p=>p.to).sort().pop();status=amt>0?'जमा':'बाकी';c=amt>0?'paid':'due';}
+    else{amt=ps.reduce((s,p)=>s+Number(p.amt),0);upto=ps.map(p=>p.to).sort().pop();status=amt>0?'जमा':'बाकी';c=amt>0?'paid':'due';}
+    return {m,amt,upto,status,c};
   });
   const total=rows.reduce((s,r)=>s+r.amt,0);
-  const paid=rows.filter(r=>r.amt>0).length;
-  $('#pubCStats').innerHTML=`<div class="stat hl"><div class="k">कुल कलेक्शन</div><div class="v">${rs(total)}</div></div><div class="stat"><div class="k">सदस्य</div><div class="v">${rows.length}</div></div><div class="stat"><div class="k">जमा करने वाले</div><div class="v">${paid}</div></div><div class="stat"><div class="k">बाकी</div><div class="v">${rows.length-paid}</div></div>`;
-  $('#pubCRows').innerHTML=rows.map(r=>`<tr><td class="sr">${r.m.sr}</td><td class="name">${esc(r.m.name)}</td><td class="n">${r.amt?rs(r.amt):'—'}</td><td>${r.upto?mS(r.upto):'—'}</td><td><span class="pill ${r.amt>0?'paid':'due'}">${r.status}</span></td></tr>`).join('')||`<tr><td colspan="5" class="empty">कोई सदस्य नहीं मिला।</td></tr>`;
+  const paid=rows.filter(r=>r.c!=='due').length;
+  $('#pubCStats').innerHTML=`<div class="stat hl"><div class="k">कुल कलेक्शन</div><div class="v">${rs(total)}</div></div><div class="stat"><div class="k">सदस्य</div><div class="v">${rows.length}</div></div><div class="stat"><div class="k">जमा / ✓ कवर</div><div class="v">${paid}</div></div><div class="stat"><div class="k">बाकी</div><div class="v">${rows.length-paid}</div></div>`;
+  $('#pubCRows').innerHTML=rows.map(r=>`<tr class="clk" data-pm="${esc(r.m.id)}"><td class="sr">${r.m.sr}</td><td class="name">${esc(r.m.name)}</td><td class="n">${r.amt?rs(r.amt):'—'}</td><td>${r.upto?mS(r.upto):'—'}</td><td><span class="pill ${r.c}">${r.status}</span></td></tr>`).join('')||`<tr><td colspan="5" class="empty">कोई सदस्य नहीं मिला।</td></tr>`;
+  $('#pubCRows').querySelectorAll('[data-pm]').forEach(tr=>tr.onclick=()=>{const nx=tr.nextElementSibling;if(nx&&nx.classList.contains('det')){nx.remove();return}
+    const ps=pubPayments.filter(p=>p.mid===tr.dataset.pm);const end=[CUR,...ps.map(p=>p.to)].sort().pop();const ks=range(START,end).slice(0,36);
+    const cells=ks.map(k=>{const s=statusFrom(ps,k);const c=s.c==='flag'?'cov':s.c;return `<div class="mo ${c}">${mS(k)}<b>${s.recv?rs(s.recv):c==='due'?(k>CUR?'·':'बाकी'):'✓'}</b></div>`}).join('');
+    const tot=ps.reduce((s,p)=>s+Number(p.amt),0);
+    tr.insertAdjacentHTML('afterend',`<tr class="det"><td colspan="5"><div style="font-weight:600">कुल जमा: ${rs(tot)}</div><div class="months">${cells||'<span class="hint">कोई महीना नहीं</span>'}</div></td></tr>`)});
   $('#pubCTotals').textContent=`कुल कलेक्शन: ${rs(total)}  ·  सदस्य: ${rows.length}  ·  जमा करने वाले: ${paid}  ·  बाकी: ${rows.length-paid}  ·  महीना: ${M?mL(M):(pubAllowMonths.length?'चुने हुए सभी महीने':'सभी महीने')}`;
 }
+let pubSnap=null;
+async function loadPubSnap(){
+  if(pubSnap)return pubSnap;
+  try{const s=await Store.getPublicData();if(s&&Array.isArray(s.members)){pubSnap=s;START=s.start||START;pubMembers=s.members;pubPayments=s.payments||[];pubAllowMonths=s.allow||[];pubCollLoaded=true}}catch(e){}
+  return pubSnap;
+}
 async function loadPubColl(){
+  await loadPubSnap();
+  if(pubSnap){renderPubColl();return}
   if(pubCollLoaded){
     try{const st=await Store.fs.doc('settings/main').get();pubAllowMonths=st.exists?(st.data().publicCollectionMonths||[]):[];}catch(e){}
     renderPubColl();return;
@@ -794,20 +1113,58 @@ async function loadPubColl(){
     renderPubColl();
   }catch(e){$('#pubCRows').innerHTML='<tr><td colspan="5" class="empty">कलेक्शन नहीं खुला। इंटरनेट जाँचें।</td></tr>';}
 }
-$('#pubTabReport').onclick=()=>{$('#pubReportWrap').hidden=false;$('#pubCollWrap').hidden=true;$('#pubTabReport').className='btn';$('#pubTabColl').className='btn ghost';};
-$('#pubTabColl').onclick=()=>{$('#pubReportWrap').hidden=true;$('#pubCollWrap').hidden=false;$('#pubTabReport').className='btn ghost';$('#pubTabColl').className='btn';loadPubColl();};
-$('#pubCMonth').onchange=renderPubColl;
+function pubTab(n){['Report','Coll','Acc'].forEach(x=>{$('#pub'+x+'Wrap').hidden=x!==n;$('#pubTab'+x).className=x===n?'btn':'btn ghost'});
+  if(n==='Coll')loadPubColl();if(n==='Acc')renderPubAcc()}
+document.querySelectorAll('[data-pt]').forEach(b=>b.onclick=()=>pubTab(b.dataset.pt));
+$('#pubCMonth').onchange=renderPubColl;$('#pubCSearch').addEventListener('input',renderPubColl);
+async function renderPubAcc(){
+  const B=$('#pubAccBody');B.innerHTML='<div class="empty">हिसाब लोड हो रहा है…</div>';
+  const s=await loadPubSnap();
+  if(!s){B.innerHTML='<div class="empty">पूरा हिसाब अभी उपलब्ध नहीं है। एडमिन के एक बार लॉगिन करते ही यहाँ दिखेगा।</div>';return}
+  const acc=accountsOf(s,s.start||START);const last=acc[acc.length-1];
+  const tin=acc.reduce((a,x)=>a+x.in,0),tout=acc.reduce((a,x)=>a+x.out,0);
+  const help=(s.help||[]).filter(h=>h.date.slice(0,7)>=(s.start||START)).sort((a,b)=>b.date.localeCompare(a.date));
+  B.innerHTML=`<div class="stats"><div class="stat hl"><div class="k">खाते में शेष</div><div class="v">${rs(last?last.close:s.opening)}</div></div><div class="stat"><div class="k">${mS(s.start||START)} से कुल जमा</div><div class="v">${rs(tin)}</div></div><div class="stat"><div class="k">कुल सहायता</div><div class="v">${rs(tout)}</div></div><div class="stat"><div class="k">शुरुआती शेष</div><div class="v">${rs(s.opening)}</div></div></div>
+  <div class="panel" style="margin-top:16px"><div class="ph"><h2>महीनेवार हिसाब</h2></div><div class="tbl"><table><thead><tr><th>महीना</th><th class="n">पिछला शेष</th><th class="n">जमा</th><th class="n">सहायता</th><th class="n">शेष</th></tr></thead><tbody>
+  ${acc.slice().reverse().map(x=>`<tr><td>${mL(x.k)}${(s.closed||[]).includes(x.k)?' <span class="pill paid">🔒 फाइनल</span>':''}</td><td class="n">${rs(x.open)}</td><td class="n" style="color:var(--ok)">${rs(x.in)}</td><td class="n" style="color:var(--kumkum)">${x.out?rs(x.out):'—'}</td><td class="n" style="font-weight:700">${rs(x.close)}</td></tr>`).join('')}</tbody></table></div></div>
+  <div class="panel" style="margin-top:16px"><div class="ph"><h2>सहायता खर्च</h2></div><div class="tbl"><table><thead><tr><th>तारीख</th><th>विवरण</th><th class="n">राशि</th></tr></thead><tbody>
+  ${help.map(h=>`<tr><td>${h.date.split('-').reverse().join('-')}</td><td style="white-space:normal">${esc(h.desc)}</td><td class="n">${rs(h.amt)}</td></tr>`).join('')||'<tr><td colspan="3" class="empty">अभी कोई सहायता नहीं।</td></tr>'}</tbody></table></div></div>
+  <p class="hint" style="text-align:center">आखिरी अपडेट: ${s.at?new Date(s.at).toLocaleString('hi-IN'):'—'}</p>`;
+}
 
 /* ============ FORMS ============ */
 $('#pFrom').onchange=()=>{if($('#pTo').value<$('#pFrom').value)$('#pTo').value=$('#pFrom').value};
 $('#payForm').onsubmit=e=>{e.preventDefault();const m=findMem($('#pMember').value);
   if(!m)return toast('सदस्य नहीं मिला, सूची से नाम चुनें');
   if($('#pTo').value<$('#pFrom').value)return toast('"तक" वाला महीना "से" के बाद होना चाहिए');
-  Store.put('payments',{id:uid(),mid:m.id,month:$('#pDate').value.slice(0,7),date:$('#pDate').value,amt:Number($('#pAmt').value),from:$('#pFrom').value,to:$('#pTo').value,mode:$('#pMode').value,note:$('#pNote').value.trim()});
-  $('#pMember').value='';$('#pAmt').value='';$('#pNote').value='';toast(m.name+' की राशि जमा हुई')};
-$('#helpForm').onsubmit=e=>{e.preventDefault();Store.put('help',{id:uid(),date:$('#hDate').value,amt:Number($('#hAmt').value),desc:$('#hDesc').value.trim()});
-  $('#hAmt').value='';$('#hDesc').value='';toast('सहायता दर्ज हुई')};
-$('#opening').onchange=()=>{Store.setOpening(Number($('#opening').value)||0);toast('ओपनिंग राशि अपडेट हुई')};
+  const id=$('#pId').value,k=$('#pDate').value.slice(0,7);
+  if(!guard(k))return;if(id){const old=db.payments.find(p=>p.id===id);if(old&&!guard(old.month))return}
+  Store.put('payments',{id:id||uid(),mid:m.id,month:k,date:$('#pDate').value,amt:Number($('#pAmt').value),from:$('#pFrom').value,to:$('#pTo').value,mode:$('#pMode').value,note:$('#pNote').value.trim()});
+  resetPay(!!id);toast(id?m.name+' की जमा अपडेट हुई':m.name+' की राशि जमा हुई')};
+function resetPay(full){$('#pId').value='';$('#pMember').value='';$('#pAmt').value='';$('#pNote').value='';$('#payTitle').textContent='राशि जमा करें';$('#pSave').textContent='जमा सेव करें';$('#pCancel').hidden=true;$('#payForm').classList.remove('edit-on');
+  if(full){$('#pDate').value=TODAY;$('#pFrom').value=CUR;$('#pTo').value=CUR;$('#pMode').value='UPI'}}
+$('#pCancel').onclick=()=>resetPay(true);
+function resetHelp(){$('#hId').value='';$('#hAmt').value='';$('#hDesc').value='';$('#hDate').value=TODAY;$('#helpTitle').textContent='सहायता / खर्च जोड़ें';$('#hSave').textContent='सहायता सेव करें';$('#hCancel').hidden=true;$('#helpForm').classList.remove('edit-on')}
+$('#hCancel').onclick=resetHelp;
+$('#helpForm').onsubmit=e=>{e.preventDefault();const id=$('#hId').value;
+  if(!guard($('#hDate').value.slice(0,7)))return;if(id){const old=db.help.find(h=>h.id===id);if(old&&!guard(old.date.slice(0,7)))return}
+  Store.put('help',{id:id||uid(),date:$('#hDate').value,amt:Number($('#hAmt').value),desc:$('#hDesc').value.trim()});
+  resetHelp();toast(id?'सहायता अपडेट हुई':'सहायता दर्ज हुई')};
+['#opening','#sMonth'].forEach(x=>$(x).addEventListener('input',()=>{$(x).dataset.dirty=1;$('#openLbl').textContent=`${mL($('#sMonth').value||START)} से पहले खाते में`}));
+function closeBefore(k){if(k<=START)return Number(db.opening)||0;const a=accounts().find(x=>x.k===addM(k,-1));return a?a.close:Number(db.opening)||0}
+$('#sAuto').onclick=()=>{const k=$('#sMonth').value;if(!k)return toast('पहले शुरुआत का महीना चुनें');
+  if(k<=START)return toast(`${mL(k)} मौजूदा शुरुआत से पहले है — राशि खुद लिखें`);
+  $('#opening').value=closeBefore(k);$('#opening').dataset.dirty=1;toast(`${mL(addM(k,-1))} का क्लोज़िंग ${rs($('#opening').value)} भरा — अब सेव करें`)};
+$('#startForm').onsubmit=e=>{e.preventDefault();const k=$('#sMonth').value,op=Number($('#opening').value)||0;
+  START=k;db.opening=op;delete $('#sMonth').dataset.dirty;delete $('#opening').dataset.dirty;
+  Store.setSettings({startMonth:k,opening:op});render();toast(`हिसाब अब ${mL(k)} से — शुरुआती शेष ${rs(op)}`)};
+$('#sLockOld').onclick=()=>{const ks=range(START,addM(CUR,-1));if(!ks.length)return toast('बंद करने के लिए कोई पिछला महीना नहीं');
+  if(!confirm(`${ks.map(mS).join(', ')} — ये सभी महीने बंद (फाइनल) करने हैं?`))return;
+  db.closed=[...new Set([...(db.closed||[]),...ks])].sort();Store.setSettings({closed:db.closed});render();toast(ks.length+' महीने बंद हुए')};
+$('#sPurge').onclick=async()=>{const ps=db.payments.filter(p=>p.month<START&&p.to<START),hs=db.help.filter(h=>h.date.slice(0,7)<START);
+  if(!ps.length&&!hs.length)return toast(`${mL(START)} से पहले की कोई entry नहीं`);
+  if(!confirm(`${mL(START)} से पहले की ${ps.length} जमा और ${hs.length} सहायता हमेशा के लिए मिटानी हैं? (पहले बैकअप ले लें)`))return;
+  try{await Store.delMany([...ps.map(p=>['payments',p.id]),...hs.map(h=>['help',h.id])]);toast('पुरानी entries हटाई गईं')}catch(e){err(e)}};
 function resetMem(){$('#memForm').reset();$('#mId').value='';$('#mFormTitle').textContent='नया सदस्य';$('#mSave').textContent='सदस्य जोड़ें';$('#mCancel').hidden=true;render()}
 $('#mCancel').onclick=resetMem;
 $('#memForm').onsubmit=e=>{e.preventDefault();const id=$('#mId').value;const sr=Number($('#mSr').value);
@@ -821,13 +1178,13 @@ function collectionData(){
   const q=($('#cSearch').value||'').trim();
   const rows=sorted().filter(m=>!q||m.name.includes(q)||stripShri(m.name).includes(q)||String(m.sr)===q).map(m=>{
     const ps=db.payments.filter(p=>p.mid===m.id);
-    let amt,upto,status;
-    if(M){const s=monthStatus(m.id,M);amt=s.recv;status=s.l;upto=ps.map(p=>p.to).sort().pop();}
-    else{amt=ps.reduce((s,p)=>s+Number(p.amt),0);upto=ps.map(p=>p.to).sort().pop();status=amt>0?'जमा':'बाकी';}
-    return {m,amt,upto,status};
+    let amt,upto,status,c;
+    if(M){const s=monthStatus(m.id,M);amt=s.recv;status=s.l;c=s.c==='flag'?'cov':s.c;upto=ps.map(p=>p.to).sort().pop();}
+    else{amt=ps.reduce((s,p)=>s+Number(p.amt),0);upto=ps.map(p=>p.to).sort().pop();status=amt>0?'जमा':'बाकी';c=amt>0?'paid':'due';}
+    return {m,amt,upto,status,c};
   });
   const total=rows.reduce((s,r)=>s+r.amt,0);
-  const paid=rows.filter(r=>r.amt>0).length;
+  const paid=rows.filter(r=>r.c!=='due').length;
   return {M,rows,total,paid,totalMembers:rows.length};
 }
 function renderCollection(){
@@ -838,8 +1195,8 @@ function renderCollection(){
   $('#cMonth').innerHTML=opts.map(k=>`<option value="${k}">${k?mL(k):'सभी महीने'}</option>`).join('');
   if(opts.includes(cur))$('#cMonth').value=cur;else $('#cMonth').value='';
   const d=collectionData();
-  $('#cStats').innerHTML=`<div class="stat hl"><div class="k">कुल कलेक्शन</div><div class="v">${rs(d.total)}</div></div><div class="stat"><div class="k">सदस्य</div><div class="v">${d.totalMembers}</div></div><div class="stat"><div class="k">जमा करने वाले</div><div class="v">${d.paid}</div></div><div class="stat"><div class="k">बाकी</div><div class="v">${d.totalMembers-d.paid}</div></div>`;
-  $('#cRows').innerHTML=d.rows.map(r=>`<tr><td class="sr">${r.m.sr}</td><td class="name">${esc(r.m.name)}</td><td>${esc(r.m.phone||'')}</td><td class="n">${r.amt?rs(r.amt):'—'}</td><td>${r.upto?mS(r.upto):'—'}</td><td><span class="pill ${r.amt>0?'paid':'due'}">${r.status}</span></td></tr>`).join('')||`<tr><td colspan="6" class="empty">कोई सदस्य नहीं मिला।</td></tr>`;
+  $('#cStats').innerHTML=`<div class="stat hl"><div class="k">कुल कलेक्शन</div><div class="v">${rs(d.total)}</div></div><div class="stat"><div class="k">सदस्य</div><div class="v">${d.totalMembers}</div></div><div class="stat"><div class="k">जमा / ✓ कवर</div><div class="v">${d.paid}</div></div><div class="stat"><div class="k">बाकी</div><div class="v">${d.totalMembers-d.paid}</div></div>`;
+  $('#cRows').innerHTML=d.rows.map(r=>`<tr><td class="sr">${r.m.sr}</td><td class="name">${esc(r.m.name)}</td><td>${esc(r.m.phone||'')}</td><td class="n">${r.amt?rs(r.amt):'—'}</td><td>${r.upto?mS(r.upto):'—'}</td><td><span class="pill ${r.c}">${r.status}</span></td></tr>`).join('')||`<tr><td colspan="6" class="empty">कोई सदस्य नहीं मिला।</td></tr>`;
   $('#cTotals').textContent=`कुल कलेक्शन: ${rs(d.total)}  ·  सदस्य: ${d.totalMembers}  ·  जमा करने वाले: ${d.paid}  ·  बाकी: ${d.totalMembers-d.paid}  ·  महीना: ${d.M?mL(d.M):'सभी महीने'}`;
   if($('#cPubStatus')){
     const allow=db.publicCollectionMonths||[];
@@ -921,11 +1278,12 @@ function drawCollectionPNG(){
 function downloadReportAsSticker(){
   const el=document.querySelector('#repPreview .rep')||document.getElementById('repPreview');
   if(window.html2canvas&&el){
-    return window.html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true}).then(cv=>{
-      downloadCanvas(cv,`Durga-Shakti-Monthly-Report-${(curRep||{}).month||($('#rMonth').value||CUR)}.png`);
+    return window.html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true,ignoreElements:x=>x.classList&&x.classList.contains('noexp')}).then(cv=>{
+      downloadCanvas(cv,`Durga-Shakti-Report-${(curRep||{}).key||($('#rMonth').value||CUR)}.png`);
       toast('PNG डाउनलोड हो गया');
-    }).catch(()=>{drawReportPNG();toast('PNG डाउनलोड हो गया');});
+    }).catch(()=>{if(curRep&&curRep.type!=='month')return toast('PNG नहीं बना, दोबारा कोशिश करें');drawReportPNG();toast('PNG डाउनलोड हो गया');});
   } else {
+    if(curRep&&curRep.type!=='month')return toast('PNG के लिए इंटरनेट चाहिए');
     drawReportPNG();toast('PNG डाउनलोड हो गया');
   }
 }
@@ -934,7 +1292,7 @@ function drawReportPNG(){
   const W=1200;
   const sums=[['पिछला शेष',rs(r.open)],['इस माह जमा',rs(r.in)],['सहायता खर्च',rs(r.out)],['खाते में शेष',rs(r.close)],['इस माह जमा करने वाले',String(r.paid.length)],['एडवांस से कवर',String(r.covCount)],['बाकी',String(r.dueCount)]];
   const paidRows=r.paid.length||1;
-  const helpRows=r.help.length||0;
+  const helpRows=r.help.length||0;const covL=r.cov||[];
   const dueNames=r.due||[];
   const dueText=dueNames.join(', ');
   let dueLines=0;
@@ -946,7 +1304,7 @@ function drawReportPNG(){
     words.forEach(w=>{const test=line?line+' '+w:w;if(meas.measureText(test).width>1060&&line){lines++;line=w;}else{line=test;}});
     dueLines=lines;
   }
-  const H=170+sums.length*52+50+44+paidRows*50+(helpRows?50+44+helpRows*50:0)+(dueText?50+44+dueLines*30:0)+80;
+  const H=170+sums.length*52+50+44+paidRows*50+(helpRows?50+44+helpRows*50:0)+(covL.length?50+44+covL.length*50:0)+(dueText?50+44+dueLines*30:0)+80;
   const cv=document.createElement('canvas');cv.width=W;cv.height=H;const ctx=cv.getContext('2d');
   ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
   ctx.fillStyle='#9e2019';ctx.fillRect(0,0,W,120);
@@ -967,6 +1325,11 @@ function drawReportPNG(){
   ctx.font='21px Mukta, sans-serif';ctx.fillStyle='#2a1712';
   if(r.paid.length){r.paid.forEach(p=>{ctx.fillText(fitText(ctx,p.name,640),40,y+32);ctx.fillText(rs(p.amt),720,y+32);y+=50;});}
   else{ctx.fillText('इस माह अभी कोई जमा नहीं।',40,y+32);y+=50;}
+  if(covL.length){
+    y+=10;ctx.fillStyle='#2f7d4a';ctx.font='700 23px Mukta, sans-serif';ctx.fillText('✓ पहले से जमा (एडवांस से कवर)',40,y+28);y+=44;
+    ctx.font='21px Mukta, sans-serif';
+    covL.forEach(c=>{ctx.fillStyle='#2a1712';ctx.fillText(fitText(ctx,c.name,640),40,y+32);ctx.fillStyle='#2f7d4a';ctx.fillText('✓ '+(c.upto?mS(c.upto)+' तक':''),720,y+32);y+=50;});
+  }
   if(r.help.length){
     y+=10;ctx.fillStyle='#9e2019';ctx.font='700 23px Mukta, sans-serif';ctx.fillText('सहायता खर्च',40,y+28);y+=44;
     ctx.font='21px Mukta, sans-serif';ctx.fillStyle='#2a1712';
@@ -994,6 +1357,9 @@ function downloadCollectionExcel(){
 }
 function downloadReportExcel(){
   const r=curRep||buildReport($('#rMonth').value||CUR,$('#rDue').checked);const M=r.month;
+  const NX=['All rights reserved - Nexora - Digital & IT Agency'];
+  if(r.type==='range')return downloadCSV(`Durga-Shakti-Report-${r.key}.csv`,[['दुर्गा शक्ति फाउंडेशन',`${mL(r.from)} – ${mL(r.to)} — अवधि रिपोर्ट`],[],[mS(r.from)+' से पहले शेष',r.open],['कुल जमा',r.in],['कुल सहायता',r.out],['खाते में शेष',r.close],[],['महीना','जमा','सहायता','शेष'],...r.months.map(x=>[mL(x.k),x.in,x.out,x.close]),[],['क्र.','सदस्य','इस अवधि में जमा','कहाँ तक जमा','बाकी महीने'],...r.members.map(m=>[m.sr,m.name,m.amt,m.upto?mL(m.upto):'',m.dueM]),[],['तारीख','सहायता विवरण','राशि'],...r.help.map(h=>[h.date,h.desc,h.amt]),[],NX]);
+  if(r.type==='due')return downloadCSV(`Durga-Shakti-Baki-${M}.csv`,[['दुर्गा शक्ति फाउंडेशन',mL(M)+' — बाकी सदस्य'],[],['क्र.','सदस्य','मोबाइल','आखिरी जमा तक'],...r.due.map(d=>[d.sr,d.name,d.phone,d.last?mL(d.last):'कभी नहीं']),[],['कुल बाकी',r.dueCount],[],NX]);
   const rows=[['दुर्गा शक्ति फाउंडेशन',mL(M)+' — मासिक रिपोर्ट'],[],['पिछला शेष',r.open],['इस माह जमा',r.in],['सहायता खर्च',r.out],['खाते में शेष',r.close],[],['क्र.','सदस्य','स्थिति','इस माह जमा'],...sorted().map(m=>{const s=monthStatus(m.id,M);return [m.sr,m.name,s.l,s.recv]}),[],['कुल सदस्य',r.total],['इस माह जमा करने वाले',r.paid.length],['एडवांस से कवर',r.covCount],['बाकी',r.dueCount],[],['All rights reserved - Nexora - Digital & IT Agency']];
   downloadCSV(`Durga-Shakti-Monthly-Report-${M}.csv`,rows);
 }
@@ -1004,13 +1370,16 @@ $('#rXls').onclick=()=>{downloadReportExcel();toast('Excel डाउनलोड
 
 /* ============ BACKUP ============ */
 async function copy(t,msg){try{await navigator.clipboard.writeText(t);toast(msg||'कॉपी हो गया')}catch(e){$('#bkText').value=t;show('backup');$('#bkText').select();toast('टेक्स्ट चुना है, कॉपी करें')}}
-$('#bkCopy').onclick=()=>copy(JSON.stringify({members:db.members,payments:db.payments,help:db.help,opening:db.opening}));
+$('#bkCopy').onclick=()=>copy(JSON.stringify({members:db.members,payments:db.payments,help:db.help,opening:db.opening,startMonth:START,closed:db.closed||[]}));
+$('#bkWipe').onclick=async()=>{const v=prompt('पूरा डेटा (सभी सदस्य, जमा, सहायता) हमेशा के लिए मिटेगा। पहले "बैकअप कॉपी करें" दबा लें।\nपक्का करने के लिए DELETE लिखें:');
+  if(v!=='DELETE')return toast('कुछ नहीं मिटाया');
+  try{await Store.delMany([...db.members.map(x=>['members',x.id]),...db.payments.map(x=>['payments',x.id]),...db.help.map(x=>['help',x.id])]);toast('सारा डेटा मिटा दिया')}catch(e){err(e)}};
 $('#bkCsv').onclick=()=>{const q=v=>`"${String(v??'').replace(/"/g,'""')}"`;
   copy(['Sr,Member,Received Month,Amount,Covers From,Covers To,Mode,Note',...db.payments.map(p=>{const m=mem(p.mid)||{};return [m.sr,m.name,p.month,p.amt,p.from,p.to,p.mode,p.note].map(q).join(',')})].join('\n'))};
 $('#bkRestore').onclick=async()=>{let d;try{d=JSON.parse($('#bkText').value)}catch(e){return toast('डेटा सही नहीं है, पूरा टेक्स्ट पेस्ट करें')}
   if(!Array.isArray(d.members)||!Array.isArray(d.payments))return toast('डेटा सही नहीं है');
   const items=[...d.members.map(o=>['members',{...o,name:stripShri(o.name)}]),...d.payments.map(o=>['payments',o]),...(d.help||[]).map(o=>['help',o])];
-  try{await Store.putMany(items);if(d.opening!=null)await Store.setOpening(Number(d.opening));$('#bkText').value='';toast(`${d.members.length} सदस्य, ${d.payments.length} जमा इम्पोर्ट हुए`)}catch(e){err(e)}};
+  try{await Store.putMany(items);if(d.opening!=null)await Store.setOpening(Number(d.opening));if(d.startMonth)await Store.setSettings({startMonth:d.startMonth,closed:d.closed||[]});$('#bkText').value='';toast(`${d.members.length} सदस्य, ${d.payments.length} जमा इम्पोर्ट हुए`)}catch(e){err(e)}};
 
 
 /* ============ START ============ */
